@@ -1,0 +1,152 @@
+//Codeforces 545  E.Paths and Trees
+
+/*
+题目的意思是说在一个图中
+有n个点，m条边
+边连接的点和相应的权值，找到一条通路，使得边权总和最小，
+且从u到各点的距离最短
+就是传说中的最短生成树
+最后输出 距离总和以及在通路中边的序号
+思路
+1.存边 因为是无向图，所以得存双份
+用一个vector<edge> con[MAX_N];存边
+表示 con[i] 存的是所有和点i相连的边
+
+2.cost[max_n];
+dis[max_n];
+in[max_n];
+
+cost[i] 表示与第i个点相连的最短边
+dis[i] 表示u到i的最短路
+in[i] 表示第i个点选择的边的序号
+
+3. Dijkstra 算法
+原始算法
+从起点开始，先更新周围的点，然后选择距离最近的点作为下一次的起点
+以新起点重复上面的步骤 算法效率是n*m
+
+堆优化:(优先队列)
+从起点开始更新，然后加入队列中，堆顶点是u到i的最短的距离
+从堆顶取出元素再去更新周围的点
+
+从堆中取出的元素中，如果
+dis[now.id]<now.dis(当前到这点的最短距离，比这点入队前的最短距离小，则不会选择这个点去更新周围的点)
+
+4. 这道题不是单纯的dijkstra 能解决的
+而是dijkstra的拓展，题目要求找一条通路，使得，u到所有点最小，且满足条件的通路中，
+边权和最小
+由于dijkstra算法求的是单源最短路，所以选择的边中必然会得到一棵生成树，但是不一定是最小生成树
+所以 这道题是 最短路+最小生成树问题
+
+在更新的时候，需要判断两个条件
+1.如果dis[now.id]+e.w<dis[e.to] 则更新这个点的距离，并且把这个点加入队列p(dis[e.to],e.to)[把距离和点捆绑在一起加入队列，这是我们需要的信息]
+(如果都满足这个条件，得到的肯定是最小生成树)
+2.如果dis[now.id]+e.w==dis[e.to]
+这种情况的发生 必然 dis[e.to]我们更新过了，但是又有了更好的条件，则cost[e.to]已经被更新
+这个时候，我们要判断是否有更好的情况:cost[e.to]>e.w
+如果条件二满足，则我们要跟新这个点，更新dis[e.to]不会对最短路造成影响，cost[e.to]的更新是为了得到最小生成树
+
+
+注意:INF要足够大，不然会wa 因为后面的答案实在太大了
+*/
+#include<iostream>
+#include<string>
+#include<algorithm>
+#include<cstdio>
+#include<cstring>
+#include<cmath>
+#include<queue>
+#include<map>
+#include<set>
+#include<vector>
+#include<cstdlib>
+#include<functional>
+#include<cctype>
+#define INF 0xffffffffffffff
+#define MAX_N 311111
+using namespace std;
+struct Edge{
+	int to;
+	int id;
+	long long w;
+};
+
+struct P{
+	int id;
+	long long dis;
+	P(){
+	}
+
+	P(long long diss = 0, int ids = 0) :dis(diss), id(ids){
+
+	}
+	bool operator<(const P a)const{
+		return a.dis<dis;
+	}
+	//优先队列要重载赋值运算符，这样重载是为了让最小的在顶点
+	//至于为什么这么写是有点绕
+	//我们设b为堆中固有元素a为外来的 若(b<a)为真，就是说外来的小于原来的
+	//返回true，调整堆 暂时这么理解吧
+};
+
+int n, m, u;
+vector<Edge> con[MAX_N];//存边
+long long cost[MAX_N];
+long long dis[MAX_N];
+long long in[MAX_N];
+
+void Dijkstra(int x){
+	fill(cost, cost + n + 1, INF);
+	fill(dis, dis + n + 1, INF);
+	dis[x] = 0;
+	priority_queue<P> que;
+	que.push(P(dis[x], x));
+	P now(0,0);
+	while (que.size()){
+		now = que.top();
+		que.pop();
+		if (dis[now.id] < now.dis)continue;
+		//如果目前当前点的距离比其入队前要小，不要这个点
+		for (int i = 0; i < con[now.id].size(); i++){
+			Edge e = con[now.id][i];
+			if ((dis[now.id] + e.w<dis[e.to]) || (dis[now.id] + e.w == dis[e.to] && cost[e.to]>e.w)){
+				//判断两个条件 满足其一就更新，满足第一个的点要加入队列
+				bool flag = dis[now.id] + e.w < dis[e.to] ? true : false;
+				dis[e.to] = dis[now.id] + e.w;
+				cost[e.to] = e.w;
+				in[e.to] = e.id;
+				if (flag)que.push(P(dis[e.to], e.to));
+			}
+		}
+	}
+}
+	int main(){
+		cin >> n >> m;
+		int v1, v2, w;
+		Edge e;
+		for (int i = 1; i <= m; i++){
+			cin >> v1 >> v2 >> w;
+			e.id = i;
+			e.w = w;
+			e.to = v2;
+			con[v1].push_back(e);
+			e.to = v1;
+			con[v2].push_back(e);
+			//存无向图,双向边
+		}
+
+		cin >> u;
+		Dijkstra(u);
+		long long sum = 0;
+		for (int i = 1; i <= n; i++){
+			if (i == u)continue;
+			sum += cost[i];
+		}//把边权都加起来
+		cout << sum << endl;
+		for (int i = 1; i <= n; i++){
+			if (i == u)continue;
+			cout << in[i] << " ";
+		}//第i个点选择的边
+		cout << endl;
+		return 0;
+}
