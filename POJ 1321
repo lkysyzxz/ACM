@@ -1,0 +1,78 @@
+/*POJ 1321
+	题目大意:
+		给你n*n的矩阵，其中 . 是空白,#是棋盘，只有棋盘可以放棋子
+		给定 n和k
+		要求在n*n的矩阵中放k 个棋子，
+		每一行每一列只有一个棋子，
+		问有多少种方案
+	策略：搜索（深度优先搜索（DFS））
+	与一般的搜索不同的是，我们没必要走到最后一行，总共有n行，放k个棋子
+	那么我们最多只用走到n-k+1行就行了，再往后也是多余的
+	也就是从第一行到后k行的第一行
+
+	在每一行中按列遍历每一列，有#的格子是可以放棋子的，如果这一列没被占用，那么可以放棋子
+	如果还需要放的棋子数num==1，那么ans+1就行了，如果不是，还放了这个棋子就到下一行去
+	只需要从下一行到n-num+2行 (n-(num-1)+1)
+	进去之前把列标记，出来的时候把标记取消
+
+	代码如下
+*/
+
+
+#include<iostream>
+#include<string>
+#include<algorithm>
+#include<cstdio>
+#include<cstring>
+#include<cmath>
+#include<queue>
+#include<map>
+#include<set>
+#include<vector>
+#include<cstdlib>
+#include<functional>
+#include<cctype>
+#define INF 0x3f3f3f3f
+#define MAX_N 11111
+using namespace std;
+int n, k;
+char chee[10][10];
+int ans;
+bool col[10];
+void dfs(int x, int num){
+	for (int i = 1; i <= n; i++){
+		if (chee[x][i] == '#'&&col[i] != true){
+			if (num == 1)
+				ans++;
+			else{
+				for (int j = x + 1; j <= n - num + 2; j++){ //Õâ¸öÎ»ÖÃ·ÅÒ»¸ö »¹ÓÐ num-1¸ö ´ÓÕâÒ»ÐÐµÄÏÂÒ»ÐÐ¿ªÊ¼ »¹ÄÜ±éÀú n-num+1+1ÐÐ
+					col[i] = true;
+					dfs(j, num - 1);
+					col[i]=false;
+				}
+			}
+		}
+	}
+}
+int main(){
+	while (cin >> n >> k&&n&&k){
+		if (n == -1 && k == -1)
+			return 0;
+		memset(chee, 0, sizeof chee);
+		memset(col, false, sizeof col);
+		for (int i = 1; i <= n; i++){
+			for (int j = 1; j <= n; j++){
+				cin >> chee[i][j];
+			}
+			cin.get();
+		}
+		
+		for (int i = 1; i <= n - k + 1; i++){
+			dfs(i,k);
+		}
+
+		cout << ans << endl;
+		ans = 0;
+	}
+	return 0;
+}
