@@ -1,0 +1,96 @@
+/*POJ 2251
+	这是一个三维的最短路问题，有6个方向
+	上下左右前后，我们得把这六个方向表示出来，然后用宽度优先搜索(bfs)就可以解决它了
+	代码如下
+	*/
+
+	#include<iostream>
+#include<string>
+#include<algorithm>
+#include<cstdio>
+#include<cstring>
+#include<cmath>
+#include<queue>
+#include<map>
+#include<set>
+#include<vector>
+#include<cstdlib>
+#include<functional>
+#include<cctype>
+#define INF 0x3f3f3f3f
+#define MAX_N 111
+using namespace std;
+char pic[MAX_N][MAX_N][MAX_N];
+int dis[MAX_N][MAX_N][MAX_N];
+int SX, SY, SZ;
+int EX, EY, EZ;
+int addx[6] = { 1, -1, 0, 0 ,0,0};
+int addy[6] = { 0, 0, -1, 1 ,0,0};
+int addz[6] = { 0, 0, 0, 0, 1, -1 };
+struct Point{
+	int x;
+	int y;
+	int z;
+	Point(int a=0, int b=0, int c=0) :x(a), y(b), z(c){}
+};
+int L, R, C;
+bool visit[MAX_N][MAX_N][MAX_N];
+bool sove(){
+	memset(dis, INF, sizeof dis);
+	queue<Point> que;
+	que.push(Point(SX, SY, SZ));
+	dis[SX][SY][SZ] = 0;
+	visit[SX][SY][SZ] = true;
+	Point np;
+	Point now;
+	while (!que.empty()){
+		now = que.front();
+		que.pop();
+		for (int i = 0; i < 6; i++){
+			np.x = now.x + addx[i];
+			np.y = now.y + addy[i];
+			np.z = now.z + addz[i];
+			
+			if (np.x >= 1 && np.x <= L&&np.y >= 1 && np.y <= R&&np.z >= 1 && np.z <= C
+				&&dis[now.x][now.y][now.z] + 1 < dis[np.x][np.y][np.z]
+				&&pic[np.x][np.y][np.z]!='#'){
+				//visit[np.x][np.y][np.z] = true;
+				dis[np.x][np.y][np.z] = dis[now.x][now.y][now.z] + 1;
+				que.push(np);
+			}
+		}
+	}
+
+	return dis[EX][EY][EZ] != INF;
+}
+int main()
+{
+	while (cin >> L >> R >> C){
+		if (L == 0 && R == 0 && C == 0)
+			break;
+		for (int i = 1; i <= L; i++){
+			for (int j = 1; j <= R; j++){
+				for (int k = 1; k <= C; k++){
+					cin >> pic[i][j][k];
+					if (pic[i][j][k] == 'S'){
+						SX = i;
+						SY = j;
+						SZ = k;
+					}
+					else if (pic[i][j][k] == 'E'){
+						EX = i;
+						EY = j;
+						EZ = k;
+					}
+				}
+				cin.get();
+			}
+		}
+
+		if (sove())
+			cout << "Escaped in " << dis[EX][EY][EZ] << " minute(s)." << endl;
+		else
+			cout << "Trapped!" << endl;
+	}
+	return 0;
+}
