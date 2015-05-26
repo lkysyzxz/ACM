@@ -1,0 +1,78 @@
+/*POJ 3278
+	这是一道最短路问题，农夫去追他的牛
+	农夫可以前进一步，可以后退一步
+	可以穿越时空，到当前位置*2的位置
+
+	用spfa求解
+	代码如下
+	*/
+
+	#include<iostream>
+#include<string>
+#include<algorithm>
+#include<cstdio>
+#include<cstring>
+#include<cmath>
+#include<queue>
+#include<map>
+#include<set>
+#include<vector>
+#include<cstdlib>
+#include<functional>
+#include<cctype>
+#define INF 0x3f3f3f3f
+#define MAX_N 111111
+using namespace std;
+int dis[MAX_N];
+bool inque[MAX_N];
+void spfa(int x){
+	queue<int> que;
+	que.push(x);
+	inque[x] = true;
+	memset(dis, INF, sizeof dis);
+	dis[x] = 0;
+	int now;
+	int nx;
+	while (!que.empty()){
+		now = que.front();
+		que.pop();
+		inque[now] = false;
+		nx = now + 1;
+		if (nx<=100000&&dis[now] + 1 < dis[nx]){
+			dis[nx] = dis[now]+1;
+			if (!inque[nx])
+			{
+				que.push(nx);
+				inque[nx] = true;
+			}
+		}
+		
+		nx = now - 1;
+		if (nx <= 100000&&dis[now] + 1 < dis[nx]){
+			dis[nx] = dis[now]+1;
+			if (!inque[nx])
+			{
+				que.push(nx);
+				inque[nx] = true;
+			}
+		}
+		nx = now * 2;
+		if (nx <= 100000&&dis[now] + 1 < dis[nx]){
+			dis[nx] = dis[now]+1;
+			if (!inque[nx])
+			{
+				que.push(nx); 
+				inque[nx] = true;
+			}
+		}
+	}
+}
+int n, k;
+int main()
+{
+	while (cin >> n >> k&&(n+k)){
+		spfa(n);
+		cout << dis[k];
+	}
+	return 0;
+}
