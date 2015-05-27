@@ -1,0 +1,147 @@
+/*HDU 1166 线段树
+	题目意思是一个侦察兵在监视敌人的营地，营地是连续的
+	敌人的军营人数经常要变动，他需要记录这些信息
+	长官会询问他从某个营地到某个营地的总人数，他需要回答
+	然而他每次都要去计算，很烦。请编程解决这个问题
+	
+	这是经典的线段树问题，是一道裸题
+	涉及线段树的单点更新，区间求和
+
+	给定数字n代表营地个数
+	接下来给n个数字，代表各营地的士兵数量
+	然后给出命令，并且执行命令操作
+	思路：
+	用一个数组sum[maxn];存士兵的总人数
+	sum[i];代表从第1个营地到第i个营地有多少人
+
+	struct NODE{
+		int left;
+		int right;
+		int value;
+	};
+	节点的结构
+
+	father[2*maxn];
+	用来存最末尾节点的标号 便于单点更新
+
+	代码如下
+	*/
+
+#include<iostream>
+#include<string>
+#include<cstdio>
+#include<queue>
+#include<cmath>
+#include<cstring>
+using namespace std;
+const int maxn = 51111;
+const string Add = "Add";
+const string Sub = "Sub";
+const string Query = "Query";
+const string End = "End";
+string con;
+int i;
+int j;
+int sum[maxn];
+int n;
+int sodiers[maxn];
+struct NODE{
+	int left;
+	int right;
+	int value;
+};
+
+NODE node[2 * maxn + 100];
+int father[2*maxn];
+void BuildTree(int i, int l, int r){
+	node[i].left = l;
+	node[i].right = r;
+	node[i].value = sum[r] - sum[l - 1];//存这一线段的总长度
+	if (l == r){
+		father[l] = i;
+		return;
+	}
+	int li = 2 * i;
+	int ri = 2 * i + 1;
+	BuildTree(li, l, (l + r) / 2);
+	BuildTree(ri, (l + r) / 2 + 1, r);
+}
+
+void add(int ri,int x){
+	node[ri].value += x;
+	if (ri == 1)return;
+	int fi = ri / 2;
+	add(fi, x);
+}
+
+void sub(int ri,int x){
+	node[ri].value -= x;
+	if (ri == 1)return;
+	int fi = ri / 2;
+	sub(fi, x);
+}
+
+int Query_F(int i, int left, int right){
+	if (node[i].left == left&&node[i].right == right){
+		return node[i].value;
+	}
+	
+	int res=0;
+	int li = i * 2;
+	if (left <= node[li].right)
+		if (right <= node[li].right)
+			res += Query_F(li, left, right);
+		else
+			res += Query_F(li, left, node[li].right);
+
+	int ri = i * 2 + 1;
+	if (right >= node[ri].left)
+		if (left >= node[ri].left)
+			res += Query_F(ri, left, right);
+		else
+			res += Query_F(ri, node[ri].left, right);
+
+	return res;
+}
+int main(){
+	int t;
+	int cnt = 1;
+	scanf("%d", &t);
+	while (t--){
+		scanf("%d", &n);
+		memset(sum, 0, sizeof sum);
+		memset(father, 0, sizeof father);
+		memset(node, 0, sizeof node);
+		for (int p = 1; p <= n; p++){
+			scanf("%d", &sodiers[p]);
+			sum[p] += sum[p - 1]+sodiers[p];
+		}
+
+		BuildTree(1, 1, n);
+		cout << "Case " << cnt++ << ":" << endl;
+		while (cin >> con){
+			if (con == End)break;
+			if (con == Add){
+				int x;
+				int y;
+				scanf("%d%d", &x, &y);
+				add(father[x], y);
+			}
+			else if (con == Sub){
+				int x;
+				int y;
+				scanf("%d%d", &x, &y);
+				sub(father[x],y);
+			}
+			else{
+				int ans = 0;
+				int x;
+				int y;
+				scanf("%d%d", &x, &y);
+				ans = Query_F(1, x, y);
+				cout << ans << endl;
+			}
+		}
+	}
+	return 0;
+}
