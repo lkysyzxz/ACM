@@ -1,0 +1,174 @@
+//HDU 1754
+//Creat by Dandelion
+//题目大意：老师给出一系列学生的分数，
+//有两个命令 1.更新某个学生电的分数，2.查询某个区间的最大值
+//这是线段树的单点更新，区间求最大值的题目
+
+//node[2*maxn+1]//结点个数
+//score[maxn]; 各学生分数
+/*
+	struct Node{
+		int left;
+		int right;
+		int value;
+	};
+	*/
+//第一步是生成线段树,代码如下：
+int BuildTree(int root,int left,int right){
+	int leftChild=root*2;	
+	int rightChild=root*2+1;	//当前结点的左右子节点
+
+	node[root].left=left;
+	node[root].right=right;
+	//初始化当前结点的区间
+
+	if(left==right){//当前结点是叶子节点
+		return node[root].value=score[left];
+		//把这个同学的分数记下并返回
+	}
+
+	int mid=(left+right)/2;
+
+	int a=BuildTree(leftChild,left,mid);
+	int b=BuildTree(rightChild,mid+1,right);
+	//不能这样 max(Build...,Build...) 因为max()是宏定义，会超时
+	return node[root].value=max(a,b);
+	//取左右节点的最大值
+}
+
+//第二个函数是update函数，进行单点更新
+int Update(int root,int pos,int val){
+	if(pos<node[root].left||node[root].right<pos){
+		//更新点不在这个区间内
+		return node[root].value;
+	}
+
+	if(node[root].left==pos&&node[root].right==pos){
+		//当前结点是叶子节点
+		return node[root].value=val;
+		//更新叶子节点
+	}
+
+	int a=Update(root*2,pos,val);
+	int b=Update(root*2+1,pos,val);
+
+	return node[root].value=max(a,b);
+}
+
+//第三个函数是Query 进行区间查询
+int Query(int root,int left,int right){
+	if(left>node[root].right||right<node[root].left){
+		//查询的区间不在当前结点的区间内
+		return 0;
+	}
+
+	if(left<=node[root].left&&right>=node[root].right){
+		//查询区间包含了此节点
+		return node[root].value;
+	}
+
+	int a=Query(root*2,left,right);
+	int b=Query(root*2+1,left,right);
+	return max(a,b);
+}
+
+//---------------------------------
+//----------------------------------
+//最终代码如下:
+#include<iostream>
+#include<string>
+#include<cstdio>
+#include<string>
+#include<algorithm>
+#include<cmath>
+#include<cstring>
+#include<cstdlib>
+using namespace std;
+const char U = 'U';
+const char Q = 'Q';
+const int maxn = 222222;
+char con;
+int n, m;
+int score[maxn];
+int max_score[maxn];
+int father[maxn];
+struct NODE{
+	int left;
+	int right;
+	int value;
+};
+NODE node[2 * maxn + 100];
+
+int BuildTree(int i, int left, int right){
+	int li = 2 * i;
+	int ri = 2 * i + 1;
+	int mid;
+	node[i].left = left;
+	node[i].right = right;
+
+	mid = (left + right) / 2;
+
+	if (left == right)
+		return node[i].value = score[left];
+	
+	int a = BuildTree(li, left, mid);
+	int b = BuildTree(ri, mid + 1, right);
+	return node[i].value=max(a, b);
+}
+
+int update(int root,int pos,int val){
+	if (pos < node[root].left || node[root].right < pos)
+		return node[root].value;
+	
+	if (pos == node[root].left&&pos == node[root].right)
+		return node[root].value = val;
+	
+	int a = update(2 * root, pos, val);
+	int b = update(2 * root + 1, pos, val);
+	node[root].value = max(a, b);
+	return node[root].value;
+}
+
+int query(int i, int left, int right){
+	if (left>node[i].right || right < node[i].left)
+		return 0;
+
+	// 若此区间包含 root 所管理的区间  
+	if (left<= node[i].left&&right>=node[i].right)
+		return node[i].value;
+	
+	//int mid = (left + right) / 2;
+	
+	int a = query(2 * i, left, right);
+	int b = query(2 * i + 1, left, right);
+
+
+	return max(a, b);
+}
+int main(){
+	while (scanf("%d%d", &n, &m) != EOF){
+		memset(score, 0, sizeof score);
+		memset(father, 0, sizeof father);
+		memset(node, 0, sizeof node);
+		for (int i = 1; i <= n; i++){
+			scanf("%d", &score[i]);
+		}
+		BuildTree(1, 1, n);
+
+		int x, y;
+		for (int i = 1; i <= m; i++){
+			getchar();
+			scanf("%c%d%d", &con,&x,&y);
+			if (con == U){
+				//int i = father[x];
+				score[x] = y;
+				update(1, x, y);
+			}
+			else{
+				int ans = query(1, x, y);
+				printf("%d\n", ans);
+			}
+		}
+	}
+	return 0;
+}
