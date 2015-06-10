@@ -1,0 +1,127 @@
+//hdu 1540 传说中的地道战
+/*
+题目大意:n个村庄，连续排列并相连，敌人会破坏其中一个，然后断开连接。队长会问与某个村庄有多少连接村落（包括自身)
+还能修复某个村庄
+：线段树求连续区间
+*/
+
+#include<iostream>
+#include<string>
+#include<cstdio>
+#include<cstring>
+#include<cmath>
+#include<queue>
+#include<stack>
+#include<algorithm>
+using namespace std;
+const int maxn = 50050;
+stack<int> sta;
+struct Node{
+	int left;
+	int right;
+	int ls;
+	int rs;
+	int ms;
+};
+
+Node node[3 * maxn];
+//typedef lNode (root<<1);
+//typedef rNode (root<<1)|1;
+void BuildTree(int root, int left, int right){
+	node[root].left = left;
+	node[root].right = right;
+	//初始化区间
+
+	//初始化区间长度
+	node[root].ms = right - left + 1;
+	node[root].ls = right - left + 1;
+	node[root].rs = right - left + 1;
+	if (left != right){//初始化子节点
+		int mid = (left + right) >> 1;
+		BuildTree(root << 1, left, mid);
+		BuildTree(root << 1 | 1, mid + 1, right);
+	}
+}
+
+int Update(int root, int t, int x){
+	if (node[root].left == node[root].right){//叶子节点
+		return node[root].ls = node[root].ms = node[root].rs=x;
+	}
+
+	int mid = (node[root].left + node[root].right) >> 1;
+	if (t <= mid){
+		Update(root << 1, t, x);
+	}
+	else
+		Update(root << 1 | 1, t, x);
+
+	node[root].ls = node[root << 1].ls;//父亲节点从左边数应该至少和左子节点从左边数一样多
+	node[root].rs = node[root << 1 | 1].rs;//同理
+	node[root].ms = max(max(node[root << 1].ms, node[root << 1 | 1].ms), node[root << 1].rs + node[root << 1 | 1].ls);
+	//父亲节点最大长度
+	//左子节点的最大长度
+	//右子节点的最大长度
+	//左右区间的衔接长度
+	//的最大值
+	//分析，如果左右区间是连接的，左右节点长度的衔接肯定比前两者大，如果有断点，则最长距离可能就是三者之一，这也不难想
+	//为什么忽略左节点从左边数和右节点从右边数
+	if (node[root << 1].ls == node[root << 1].right - node[root].left + 1)
+		node[root].ls += node[root << 1 | 1].ls;//如果左子树完整，父亲区间从左边数的长度应当加上右子节点左数的长度
+	if (node[root << 1 | 1].rs == node[root << 1 | 1].right - node[root<<1|1].left + 1)
+		node[root].rs += node[root << 1].rs;//同理
+}
+
+int Query(int root, int x){//查询x所在区间
+	if (node[root].left == node[root].right ||//叶子节点返回区间最大值
+		node[root].ms == 0 ||//如果某区间的最大长度为0 则x的长度必为零
+		node[root].ms == node[root].right - node[root].left + 1){//如果区间是完整的，那么x连接的节点必定是区间长度
+		return node[root].ms;
+	}
+
+	int mid = (node[root].left + node[root].right) >> 1;
+	if (x <= mid){//x在左子树上
+		if (x >= node[root << 1].right - node[root << 1].rs + 1)//左子树从右边数包含了x，那么还需要查询右子树的mid+1节点的所在区间的长度
+			return Query(root << 1, x) + Query(root << 1 | 1, mid + 1);
+		else
+			return Query(root << 1, x);//不包含，直接查询左子树
+	}
+	else{//同理
+		if (x <= node[root << 1 | 1].left + node[root << 1 | 1].ls - 1)
+			return Query(root << 1 | 1, x) + Query(root << 1, mid);
+		else
+			return Query(root << 1 | 1, x);
+	}
+}
+
+
+int n, m;
+int main(){
+	while (~scanf("%d%d", &n, &m)){
+		getchar();
+		while (!sta.empty())
+			sta.pop();
+		BuildTree(1, 1, n);
+		char con[2];
+		int x;
+		for (int i = 1; i <= m; i++){
+			scanf("%s", &con);
+			if (con[0] == 'D'){
+				scanf("%d", &x);
+				sta.push(x);
+				Update(1, x, 0);
+				//getchar();
+			}
+			else if (con[0] == 'R'){
+				x = sta.top();
+				sta.pop();
+				Update(1, x, 1);
+				//getchar();
+			}
+			else{
+				scanf("%d", &x);
+				printf("%d\n", Query(1, x));
+			}
+		}
+	}
+	return 0;
+}
