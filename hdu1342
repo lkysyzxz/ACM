@@ -1,0 +1,87 @@
+//Hdu 1342 求最小逆序数 线段树实现
+/*
+	题目给以一系列数字，求出不断把开头数字加入结尾过程中最小的逆序数
+
+	每当把起始元素从头移动到末尾时，逆序数的变化：增加 n-a[i]-1(后续数列中比a[i]大的数的个数),
+	减少a[i](比a[i]小的个数 0起始)
+
+*/
+
+#include<iostream>
+using namespace std;
+#define N 5005
+struct Node{
+	int left;
+	int right;
+	int num;//表示当前区间已经出现的数字的个数
+};
+
+Node node[N*4];
+
+void BuildTree(int root,int left,int right){
+	node[root].left=left;
+	node[root].right=right;
+	node[root].num=0;
+	//初始化
+	if(left!=right){
+		int mid=(left+right)>>1;
+		BuildTree(root<<1,left,mid);
+		BuildTree(root<<1|1,mid+1,right);
+	}
+}
+
+int getSum(int root,int t,int end){
+	if(node[root].left>=t&&node[root].right<=end){//如果当前区间被包含，则区间内出现的数字都比a[i]大，
+												 //返回区间内数字的个数即为a[i]的逆序数
+		return node[root].num;
+	}
+
+	int mid=(node[root].left+node[root].right)>>1;
+	int sum1=0;
+	int sum2=0;
+	if(t<=mid)
+		sum1=getSum(root<<1,t,end);
+	if(end>mid)
+		sum2=getSum(root<<1|1,t,end);
+	return sum1+sum2;
+}
+
+int Update(int root,int x){
+	if(node[root].left==node[root].right){//叶子节点出现次数为1,因为长度为0~n-1且不会重复出现，保证叶子节点肯定不会再被改变了
+		return node[root].num=1;
+	}
+	int mid=(node[root].left+node[root].right)>>1;
+	if(x<=mid)
+		Update(root<<1,x);
+	else
+		Update(root<<1|1,x);
+	node[root].num=node[root<<1].num+node[root<<1|1].num;//父亲节点中区间内数字出现的次数等于左右子节点出现次数之和，这也很好理解
+}
+
+int n;
+int a[N*2];
+int main(){
+	while(scanf("%d",&n)!=EOF){
+		int ans=0;
+		BuildTree(1,0,n-1);
+		for(int i=0;i<n;i++){
+			scanf("%d",&a[i]);
+			ans+=getSum(1,a[i]+1,n-1);
+			Update(1,a[i]);
+		}
+
+		int minans=ans;
+		for(int i=0;i<n;i++){
+			ans=ans+n-2*a[i]-1; 
+			//比a[i] 大的数字有 n-a[i]-1个
+			//比a[i]小的有a[i]个 
+			//加上比a[i]大的数字的个数,减去比a[i]小的个数
+			//也就是说，变换后，把a[i]的逆序数减去，把新增的逆序数加上
+			if(minans>ans)
+				minans=ans;
+		}
+		printf("%d\n",minans);
+
+	}
+	return 0;
+}
