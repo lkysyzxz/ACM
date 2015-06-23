@@ -1,0 +1,36 @@
+//hdu 1004
+//Created By Dandelion
+//题目大意:给出n个字符串，找出出现次数最多的那一个
+
+#include<iostream>
+#include<string>
+#include<cstring>
+#include<cstdio>
+#include<queue>
+#include<set>
+#include<map>
+using namespace std;
+map<string,int> str;
+//set<string> str_st;
+int n;
+int main(){
+	while (cin >> n&&n){
+		string input;
+		for (int i = 1; i <= n; i++){
+			cin >> input;
+			str[input]++;//出现次数
+			//str_st.insert(input);
+		}
+		string ans;
+		int app = 0;
+		for (map<string, int>::iterator p = str.begin(); p != str.end(); p++){
+			if (p->second > app){//具有出现次数更多的字符串，更新答案
+				ans = p->first;
+				app = p->second;
+			}
+		}
+		cout << ans << endl;
+		str.clear();
+	}
+	return 0;
+}
