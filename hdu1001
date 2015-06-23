@@ -1,0 +1,14 @@
+#include<iostream>
+#include<string>
+#include<cstdio>
+using namespace std;
+//题目大意:给一个整数n 求1+2+3+4+5....+n，一个等差数列求和，注意每一个case 之间的空行
+int main(){
+	long long n;
+	long long sum;
+	while (cin >> n){
+		sum = n + n*(n - 1) / 2;
+		cout << sum << endl << endl;
+	}
+	return 0;
+}
