@@ -1,0 +1,58 @@
+//a+b的题目  一道大整数加法的裸题
+//程序的核心部分是Sum函数的编写
+
+#include<iostream>
+#include<string>
+#include<map>
+using namespace std;
+string inputa;
+string inputb;
+void Sum(string &left, string &right, string &sum);
+int main(){
+	int t;
+	int cnt = 1;
+	cin >> t;
+	while (t--){
+		cin >> inputa >> inputb;
+		string sum;
+			//int in;	
+		Sum(inputa, inputb, sum);
+		cout << "Case " << cnt++ << ":" << endl;
+		cout << inputa << " + " << inputb << " = ";
+		for (int i = sum.size() - 1; i >= 0; i--){//逆向打印即为求和结果
+			cout << sum[i];
+		}
+		if (t != 0)
+			cout << endl << endl;
+		else
+			cout << endl;
+	}
+	return 0;
+}
+
+void Sum(string &left, string &right, string &sum){
+	int index_lef= left.size() - 1;
+	int index_rit = right.size() - 1;
+	int in = 0;//进位
+	int result;//当前位运算结果
+
+	while (index_lef >= 0 || index_rit >= 0){//当前位标签没有超出首位
+		//计算当前位加的结果
+		if (index_lef>=0 && index_rit>=0){
+			result = left[index_lef--] - '0' + right[index_rit--] - '0' + in;
+		}
+		else if (index_lef<0){//左边加数标签越位
+			result = right[index_rit--] - '0' + in;
+		}
+		else{//右边加数标签越位
+			result = left[index_lef--] - '0' + in;
+		}
+
+		//计算进位
+		in = result / 10;
+		//结果取个位数
+		result %= 10;
+		
+		sum += result + '0';//把结果加入sum中
+	}
+}
