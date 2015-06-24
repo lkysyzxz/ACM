@@ -1,0 +1,33 @@
+//HDU 1005
+//Created By Dandelion
+//题目大意 根据所给公式求值 10^8递归求解的结果是爆栈的
+//考虑到mod7 那么肯定会有周期，问题转换为求这个周期T
+
+
+
+#include<iostream>
+#include<string>
+#include<cstring>
+#include<cstdio>
+using namespace std;
+int f[1111111];
+int main(){
+	int A, B;
+	int T;
+	int n;
+	while (cin >> A >> B >> n && (A || B || n)){
+		int now = 3;
+		memset(f, 0, sizeof f);
+		f[1] = 1;
+		f[2] = 1;
+		for (now = 3; now < 10000; now++){
+			f[now] = (A*f[now - 1] + B*f[now - 2]) % 7;
+			if (f[now] == 1 && f[now - 1] == 1)break;  //当出现两个 1 1连续的时候，会重新开始新一轮的计算
+		}
+		T = now - 2;//求出周期
+		int ans = n % T;
+		f[0] = f[T];//考虑到 n%T=0的情况
+		cout << f[ans] << endl;
+	}
+	return 0;
+}
