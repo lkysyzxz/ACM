@@ -1,0 +1,97 @@
+//hdu1007 
+//Created By Dandelion 2015/6/25
+//题目大意 给n个点的坐标，求出以这些点为圆心能画出的圆互不相交的最大半径为多少
+//思路：既然不相交又要求最大，问题可以转换为求这些点中，最近的距离，然后除以二
+//如果直接暴力，肯定TLE
+//翻遍博客，发现分治可以解决，学到了新技能，而且还对别人的代码做了点优化，窃喜~~~~
+
+#include<iostream>
+#include<string>
+#include<cstdio>
+#include<cstring>
+#include<queue>
+#include<algorithm>
+#include<cmath>
+using namespace std;
+const int maxn = 111111;
+struct Point{
+	double x;
+	double y;
+};
+
+Point p[maxn];
+int cnt[maxn];
+int n;
+//bool cmpx(const Point &p1, const Point &p2){
+//	return p1.x < p2.x;
+//}
+bool cmpx(const Point &p1, const Point &p2){
+	if (p1.x == p2.x)return p1.y > p2.y;
+	else return p1.x < p2.x;
+}
+
+bool cmpy(int cnt1, int cnt2){//对cnt数组的排序比较函数
+	return p[cnt1].y > p[cnt2].y;
+}
+
+double dis(const Point &p1, const Point &p2){//求两点距离函数
+	return sqrt((p1.x - p2.x)*(p1.x - p2.x) + (p1.y - p2.y)*(p1.y - p2.y));
+}
+
+
+double find(int left, int right){//分治法求 最小点对
+	double res = maxn * 1000;//返回的最小值 先设为很大很大的数
+	double lres;//左区间的返回值
+	double rres;//右区间的返回值
+	double lx;//从mid的x往左 res个单位涵盖的最小x
+	double rx;//从mid的x往右 。。。。
+	double temp;
+	//int ct = 0;
+	if (right - left + 1 <= 3){//对于只有2个或三个点的区间，直接求最小值，然后返回
+		for (int i = left; i <= right; i++){
+			for (int j = i + 1; j <= right; j++){
+				temp = dis(p[i], p[j]);
+				if (temp <= res)res = temp;
+			}
+		}
+		return res;
+	}
+	int ct = 0;//cnt数组的尾
+	int mid = (left + right) >> 1;
+
+	lres = find(left, mid);
+	rres = find(mid + 1, right);
+
+	res = min(lres, rres);//对左右区间的返回值取较小者
+	lx = p[mid].x - res;
+	rx = p[mid].x + res;
+
+	for (int i = left; i <= right; i++){//扫描此区间，将 x在[lx,rx]的区间内的点加入 cnt集合
+		if (p[i].x >=lx&&p[i].x <=rx){
+			cnt[ct++] = i;
+		}
+	}
+	//sort(cnt, cnt + ct, cmpy);  对cnt集合进行排序 只是不必须的，因为一个sort已经搞定了，也意味着，cmpy也是多余的
+	for (int i = 0; i < ct; i++){//尝试用cnt中的点去更新 res，两两配对
+		for (int j = i + 1; j < ct; j++){
+			if (p[cnt[i]].y - p[cnt[j]].y >res)break;
+			res = min(res, dis(p[cnt[i]], p[cnt[j]]));
+		}
+	}
+
+	//该算法采用分治的思想，把问题的规模化小解决，当小规模的问题解决后，更大规模的问题可能就已经迎刃而解了，
+	//再回到大区间的时候，ct为0的概率是很大的
+	//就算ct不为0，排序后，在小规模的问题的求解过程中，得到的res 不会使得ct 的值变得很大,所以，以上两个for循环不会使时间复杂度变得很大
+	return res;
+}
+
+int main(){
+	while (scanf("%d",&n)&&n){
+		for (int i = 0; i < n; i++){
+			scanf("%lf%lf", &p[i].x, &p[i].y);
+		}
+		sort(p, p + n, cmpx);//对点排序 x按升序，y按降序，二级排序
+		printf("%.2f\n", find(0, n - 1)/2);
+	}
+	return 0;
+}
