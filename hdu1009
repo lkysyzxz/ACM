@@ -1,0 +1,48 @@
+//hdu 1009
+//Created by Dandelion 2015 6 27
+//贪心模拟题
+//题目大意是每一个房间有猫食，猫食明码标价，问M元最多可以买多少猫食
+//由于可以拆开购买，因此，计算单价J/F，按单价从大到小排序进行购买，目的是让每一元钱的价值尽可能地大，这样最终获得的猫食就是最大的
+
+#include<iostream>
+#include<string>
+#include<cstring>
+#include<cstdio>
+#include<queue>
+#include<algorithm>
+using namespace std;
+struct price{
+	double F;
+	double J;
+	double single;
+};
+bool cmp(price &a, price &b){
+	return a.single > b.single;
+}
+price pri[1111];// 数据量有1000，之前以为是100，怒送
+double m;
+int n;
+int main(){
+	while (cin >> m >> n && (n != -1 || m != -1)){
+		for (int i = 1; i <= n; i++){
+			cin >> pri[i].J >> pri[i].F;
+			pri[i].single = pri[i].J / pri[i].F;
+		}
+		sort(pri + 1, pri + n + 1,cmp);
+		double now = m;
+		double ans=0.0;
+		for (int i = 1; i <= n; i++){
+			if (now>=pri[i].F){
+				ans += pri[i].J;
+				now -= pri[i].F;
+			}
+			else{
+				ans += now*pri[i].single;
+				break;
+			}
+		}
+		printf("%.3lf\n", ans);
+		memset(pri, 0, sizeof pri);
+	}
+	return 0;
+}
