@@ -1,0 +1,35 @@
+//Codefore Round#310 div2.A
+//题目大意：给出串的长度和01串，相邻串不同的位置消除，问最后字符串还有多少个字符
+//思路：由于相邻位置不相同就要删除，那么最终的结果是，相邻位置都相同，而这是01串
+//所以最终剩下的要么是0要么是1，题目就变成了 0 的个数和1的个数的差值
+
+
+#include<iostream>
+#include<string>
+#include<cstring>
+#include<cstdio>
+#include<queue>
+#include<algorithm>
+#include<set>
+#include<map>
+#include<functional>
+using namespace std;
+string input;
+int ans;
+int main(){
+	int n;
+	cin >> n;
+	cin >> input;
+	/*for (int i = 0; i < input.size() - 1; i++){
+		charNext[i] = i + 1;
+	}*/
+	ans = input.size();
+	int a = 0;
+	int b = 0;
+	for (int i = 0; i < ans; i++){
+		if (input[i] == '0')a++;
+		else b++;
+	}
+	cout << abs(a-b) << endl;
+	return 0;
+}
