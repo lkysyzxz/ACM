@@ -1,0 +1,107 @@
+//hdu 1010
+//Created by Dandelion 2015.6.28
+/*
+	题目要求：在给出的图中寻找一条路，从S恰好走T步走到D
+	
+*/
+
+/*
+	这道题如果直接DFS会超时，BFS会wa掉，因为不是最短路问题
+	那要加一点剪枝
+	先说说剪枝：
+	如果 当前点到目标位置的曼哈顿距离 大于 t ，那么肯定是无法到达的（更不用说还有障碍物要产生偏移的情况)
+	对于每一个位置 我们要判 断这一点是否合法 
+	走到这用了 step步 要在t-step步到达目标位置 则计算该点到目标点的曼哈顿距离 temp
+	需要有 t-step>=temp 才可能有解
+	否则 无解
+	
+	奇偶剪枝：
+	另外 t-step-temp必须是偶数才可能有解
+	怎么理解呢 在某一点 t-step -temp实际上是从当前状态到终点状态的曼哈顿距离，它只考虑之前你走了多远，以及该点到终点的曼哈顿距离
+
+	这个式子的结果 是一种穿越障碍物的做法 如果有障碍物，那么 要绕过障碍物 需要花费偶数步 才能做到这一点，如果多出来的步子是奇数，无法满足要求
+	另一种情况没有障碍物，而根本无法在要求的步数内到达的情况
+	这样想，这个式子的实际上是当前状态到目标状态的曼哈顿距离，式子的结果如果是奇数，即使没有障碍物，不论怎么走，怎么拐，怎么迂回，也无法到达，因为走偏一步，需要用另一步来弥补
+
+	所以在DFS的过程中，通过 对改点的判断来不断地修正方向，可以判断能否在t步内走到目标点
+		*/
+
+
+#include<iostream>
+#include<string>
+#include<cstring>
+#include<cstdio>
+#include<queue>
+#include<map>
+#include<set>
+#include<algorithm>
+#include<functional>
+using namespace std;
+int n, m, t;
+char Map[10][10];
+bool visit[10][10];
+int addx[4] = { -1, 0, 0, 1 };
+int addy[4] = { 0, -1, 1, 0 };
+bool ans;
+int sx, sy;
+int tx, ty;
+void dfs(int x, int y, int step){
+	int nx;
+	int ny;
+	if (ans)return;
+	if (step == t&&Map[x][y] == 'D'){
+		ans = true;
+		return;
+	}
+	else if (Map[x][y] == 'D')
+		return;
+	if (step > t)return;
+
+	int temp = abs(x - tx)+abs(y - ty);
+	int pend = t - temp - step;
+	if (pend<0||pend&1)//奇偶剪枝
+		return;
+
+	for (int i = 0; i < 4&&!ans; i++){
+		nx = x + addx[i];
+		ny = y + addy[i];
+		if (nx >= 1 && nx <= n&&ny >= 1 && ny <= m&&!visit[nx][ny]){
+			visit[nx][ny] = true;
+			dfs(nx, ny, step + 1);
+			visit[nx][ny] = false;
+		}
+	}
+}
+int main(){
+	while (cin >> n >> m >> t && (n || m || t)){
+		memset(visit, false, sizeof visit);
+		memset(Map, 0, sizeof Map);
+		cin.get();//吃掉换行符
+		for (int i = 1; i <= n; i++){
+			for (int j = 1; j <= m; j++){
+				cin >> Map[i][j];
+				if (Map[i][j] == 'S'){
+					sx = i;
+					sy = j;
+					visit[i][j] = true;
+				}
+				else if (Map[i][j] == 'D'){
+					tx = i;
+					ty = j;
+				}
+				else if (Map[i][j] == 'X'){
+					visit[i][j] = true;
+				}
+			}
+			cin.get();
+		}
+
+		ans = false;
+		if (abs(sx - tx) + abs(sy-ty)<=t)//判断可能有解
+			dfs(sx, sy, 0);
+		if (ans)cout << "YES" << endl;
+		else
+			cout << "NO" << endl;
+	}
+	return 0;
+}
