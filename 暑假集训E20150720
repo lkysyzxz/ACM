@@ -1,0 +1,72 @@
+/*STL 模拟题  插队队列
+	有很多很多人，分属于不同的队伍，然后进行排队，某个人入队之前先看
+	队列中有没有队友，如果有，就插到同队的后面，如果没有，就在队伍后面
+
+	解决思路：
+		用一个队列，按不同的队伍进行排队
+		每个队伍由自己的队列，装(用指针处理，如果值为NULL，说明队伍还没有入队，就NEW一个新队伍，并把队伍加入队列，同时人入队）
+
+*/
+
+
+#include<iostream>
+#include<string>
+#include<cstring>
+#include<cstdio>
+#include<queue>
+#include<algorithm>
+using namespace std;
+int inTeam[100000000];//不尴不尬的数据，刚好够，标识编号为 i的人所在的队伍
+queue<int> Que;//队伍编号的队列
+queue<int>* teamQue[1111];//队伍各自的队列
+int main(){
+	int t;
+	int cnt = 1;
+	while (scanf("%d",&t)!=EOF&&t){
+		memset(inTeam, 0, sizeof inTeam);
+		memset(teamQue, NULL, sizeof teamQue);
+		while (!Que.empty()){
+			Que.pop();
+		}
+
+		//清空操作
+		int x;
+		int person;
+		for (int i = 1; i <= t; i++){
+			scanf("%d", &x);
+			for (int j = 1; j <= x; j++){
+				scanf("%d", &person);
+				inTeam[person] = i;//输入人的编号，并标记队伍
+			}
+		}
+		string input;
+		printf("Scenario #%d\n", cnt++);
+		while (cin >> input&&input != "STOP"){//输入指令
+			if (input == "ENQUEUE"){
+				int y;
+				scanf("%d", &y);
+				if (teamQue[inTeam[y]] == NULL){//队伍没有入队
+					teamQue[inTeam[y]] = new queue<int>;
+					Que.push(inTeam[y]);
+				}
+				teamQue[inTeam[y]]->push(y);//把人加入队伍
+			}
+			else{//出队操作
+				if (!Que.empty()){
+					int team = Que.front();
+					int z = teamQue[team]->front();
+					teamQue[team]->pop();
+					printf("%d\n", z);
+					if (teamQue[team]->empty()){//某一队的队伍空了，就把这一队 排除出来
+						delete teamQue[team];//释放内存
+						teamQue[team] = NULL;
+						Que.pop();
+					}
+				}
+			}
+		}
+
+		printf("\n");
+	}
+	return 0;
+}
