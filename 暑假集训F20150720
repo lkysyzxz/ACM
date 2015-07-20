@@ -1,0 +1,42 @@
+/*Ugly number
+简单的模拟
+Ugly number 的定义：一个数字 它的因子只有 2 3 或者 5
+也就是 某个数字 拆分因子的时候 是若干个2，3，5的乘积（数量可以是0）
+定义 1 为Ugly number
+
+这样就有递推公式
+1 为Ugly number
+一个数为Ugly number 它的两倍 三倍 五倍 也是Ugly number
+
+为避免重复, 用set 来存 算出来的数字，不断地用存进来的数字去递推，这样就可以得到无穷无尽个Ugly number
+
+然而在递推的过程中可能会遗漏，算得不饱和。所以，不能单纯地以 set的空间为1500为结束标志，应该多算几千个数字
+*/
+
+
+#include<iostream>
+#include<string>
+#include<cstdio>
+#include<cstring>
+#include<queue>
+#include<set>
+#include<cmath>
+using namespace std;
+set<long long> ugly;
+int main(){
+	ugly.insert(1);
+	set<long long>::iterator p = ugly.begin();
+	while (ugly.size() <=5000)
+	{
+		ugly.insert((*p) * 2);
+		ugly.insert((*p) * 3);
+		ugly.insert((*p) * 5);
+		p++;
+	}
+	p = ugly.begin();
+	for (int i = 1; i <1500&&ugly.end()!=p; i++)
+		p++;
+	cout << "The 1500'th ugly number is " << *p << "." << endl;
+	
+	return 0;
+}
