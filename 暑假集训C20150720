@@ -1,0 +1,34 @@
+//虽然是一道水题，然而怒送七发
+//题目大意：对输入的一篇文章进行处理，整理处单词，
+//把大写字母改成小写字母。
+//最后排序输出
+#include<iostream>
+#include<string>
+#include<cstring>
+#include<cstdio>
+#include<queue>
+#include<set>
+#include<cctype>
+using namespace std;
+set<string> word;
+string input;
+int main(){
+	char c;
+	input.clear();
+	while ((c=getchar())!=EOF){
+		if (isalpha(c)){
+			input += tolower(c);
+		}
+		else if (!isalpha(c) &&isalpha(input[0])){
+			word.insert(input);
+			input.clear();
+		}
+		//input = new string;
+	}
+	set<string>::iterator p = word.begin();
+	while (p != word.end()){
+		cout << *p<<endl;
+		p++;
+	}
+	return 0;
+}                
