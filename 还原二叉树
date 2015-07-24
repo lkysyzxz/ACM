@@ -1,0 +1,54 @@
+    #include <iostream>  
+    /** 
+        在学习二叉树遍历的时候我们学习了三种遍历方法 前序 中序 后序 
+        同时我们知道给定前序和中序、中序和后序我们可以还原二叉树， 
+        记得当时只是在纸上画了一画。现在把当时的想法完成。 
+     
+        给定前序和中序还原二叉树。。。 
+    */  
+      
+    using namespace std;  
+      
+    typedef struct node  
+    {  
+       char value;  
+       struct node *lh;  
+       struct node *rh;  
+    }node;  
+      
+    node* buildtree(char pre[],char mid[],int n) //n为子树结点个数  
+    {  
+         if(n == 0) return 0;  
+         node *p = new node;  
+         p->value = pre[0];  
+         int i;  
+         for(i=0;i<n;i++)  
+         {  
+             if(mid[i] == pre[0]) break;  
+         }  
+         p->lh = buildtree(pre+1,mid,i);  
+         p->rh = buildtree(pre+i+1 ,mid+i+1,n-i-1);  
+         return p;  
+    }  
+      
+    void print(node *root)  
+    {  
+           if(root == 0) return;  
+            cout<<root->value<<" ";  
+            print(root->lh);  
+            print(root->rh);  
+    }  
+      
+    int main()  
+    {  
+       char pre[10];  
+       char mid[10];  
+       int n;//树结点数  
+       cin>>n;  
+       cin>>pre;  
+       cin>>mid;  
+       node *p;  
+        p = buildtree(pre,mid,n);  
+        print(p);  
+        return 0;  
+    }  
