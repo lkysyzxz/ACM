@@ -1,0 +1,68 @@
+/*给一个字符串，从中找第一个出现的 47字串,根据4的位置(x)的奇偶性来改变子串
+  如果x为奇数，则 dx=dx+1=4
+     x为偶数，则 dx=dx+1=7
+  这题的规律是这样的
+  我们发现如果有 447 477 这样的子串，那再这里会构成一个循环，根据剩余次数K来判断，最终字串的形态
+  从字符串头枚举到尾发现47 先将其改变
+  可能变化的情况
+  44     变为44 由于x的位置为最前边的47的位置，所以x之前肯定在x之后，x+1变为了4,则47肯定出现在x+1之后
+		 如果7出现在x+2的位置，则出现了447的循环  447<--->477 这时候就判断剩余变换次数k的奇偶性来判断最终状态
+  77     变为77 x的位置为7 之前肯定没有47 但是可能有循环 447--->477 所以要判断x-1的位置是什么数字
+         如果是4，出现循环,处理方法同上*/
+
+#include<iostream>
+#include<string>
+#include<cstring>
+#include<queue>
+#include<set>
+#include<algorithm>
+using namespace std;
+typedef long long ll;
+ll n, k;
+string input;
+int main()
+{
+	cin >> n >> k;
+	cin >> input;
+	if (k == 0)
+		goto zero;
+	for (int i = 0; i < input.size()-1; i++)
+	{
+		if (input[i] == '4'&&input[i + 1] == '7')
+		{
+			k--;
+			//操作次数 减 1
+			if ((i + 1) & 1 == 1){//奇数位置
+				input[i] = input[i + 1] = '4';
+				//判断循环
+				if (i + 2 < input.size() && input[i + 2] == '7')//循环
+				{
+					//447
+					//477
+					if (k & 1 == 1)
+						input[i+1] = '7';
+					else
+						input[i+1] = '4';
+					break;
+				}
+			}
+			else{//偶数位置 
+
+				//477
+				//447
+				input[i] = input[i + 1] = '7';
+				if (i - 1 >= 0 && input[i - 1] == '4'){//循环
+					if (k & 1 == 1)
+						input[i] = '4';
+					else
+						input[i] = '7';
+					break;
+				}
+			}
+			if (k == 0)
+				break;
+		}
+	}
+	zero:cout << input << endl;
+	return 0;
+}
