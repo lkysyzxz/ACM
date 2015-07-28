@@ -1,0 +1,29 @@
+/*在一个队列中，有n个人
+  某个人 他知道 在他前面至少有a个人，在他后面至多有b个人
+  这是一道计算题
+  我们要计算出没有确定位置的人的数目：
+  至少有a+1人的位置是可以确定的，此人位置的变动，可以计算他后面的人数，只有当他前面或后面的人数变动，他的位置才会发生改变
+  而他前后的人交换位置，对他的位置是没有任何影响的
+  因此
+  问题可以转变为求 位于该人身后的人数的所有可能情况
+  首先计算出未能确定的数字的人数:n-1-a ----> notSure
+  这时候分两种情况
+  1.notSure>b 那么此时的notSure 变为b
+  2.notSure<b 那么notSure 不变
+  最终答案就是notSure+1(0的情况)
+  所以答案就是min(n*/
+
+#include<iostream>
+#include<string>
+#include<algorithm>
+#include<cmath>
+using namespace std;
+
+int main(){
+	int n, a, b;
+	cin >> n >> a >> b;
+	int notSure = n - a - 1;
+	int ans=min(n-a-1,b)+1;
+	cout << ans << endl;
+	return 0;
+}
