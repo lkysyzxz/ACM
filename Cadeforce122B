@@ -1,0 +1,58 @@
+/*寻找一个幸运数字，满足以下三个条件的
+    represents a lucky number without leading zeroes,
+    is not empty,
+    is contained in s as a substring the maximum number of times.
+	第一 是幸运数字
+	第二 非空
+	第三 在S中出现次数最多
+
+	次数相同，要求输出字典序较小者
+	所有字串中，同时包含4和7的或包含多个4和多个7的，出现次数不会比4和7单独出现的多
+	所以 答案不是4就是7
+	那么问题就变为 在S中队4和7计数，输出较多者
+	分三种情况
+	1.二者一样多 ： 都为0 则 输出 -1，不为0 答案为4（字典序）
+	2.二者不一样 ： 输出数量最大者*/
+
+#include<iostream>
+#include<string>
+using namespace std;
+char annilize(string &input)
+{
+	int four = 0;
+	int seven = 0;
+	for (int i = 0; i < input.size(); i++)
+	{
+		if (input[i] == '4'){
+			four++;
+			//break;
+		}
+		if (input[i] == '7')
+		{
+			seven++;
+		//	break;
+		}
+	}
+	if (seven > four)
+		return '7';
+	else if (four > seven)
+		return '4';
+	else
+	{
+		if (four == 0)
+			return -1;
+		else
+			return '4';
+	}
+}
+int main()
+{
+	string input;
+	cin >> input;
+	char res = annilize(input);
+	if (res == -1)
+		cout << -1 << endl;
+	else
+		cout << res << endl;
+	return 0;
+}
