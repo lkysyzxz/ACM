@@ -1,0 +1,53 @@
+/*定义一个函数 NexT(x)=大于或等于x的幸运数字
+  给定一个闭区间，l r,输出 在这个区间内函数Next(x)的值的和
+  
+  规律题：发现规律如果一个数字为幸运数字x 则 x*10+4 x*10+7也是幸运数字
+  把所有幸运数字筛出来，加入集合
+  对于区间l r
+  从l开始 计算右边界（使用lower_bound())
+  有边界可能是next(l) 也可能是 r
+  从左边界到右边界的值都是一样的，用乘法计算
+  更新左边界 重复上面的操作*/
+
+#include<iostream>
+#include<string>
+#include<cstdio>
+#include<cstring>
+#include<queue>
+#include<set>
+using namespace std;
+typedef long long ll;
+set<ll> luckNumber;
+int main()
+{
+	luckNumber.insert(4);
+	luckNumber.insert(7);
+	set<ll>::iterator p = luckNumber.begin();
+	while (p != luckNumber.end())
+	{
+		luckNumber.insert((*p) * 10 + 4);
+		luckNumber.insert((*p) * 10 + 7);
+		if ((*p) * 10 + 7 > 1e9)
+			break;
+		p++;
+	}
+	ll l, r;
+	cin >> l >> r;
+	ll ans = 0;
+	for (ll i = l; i <= r; i++)
+	{
+		set<ll>::iterator lowB = luckNumber.lower_bound(i);
+		if (*lowB > r)
+		{
+			ans += (*lowB)*(r - i + 1);
+			break;
+		}
+		else
+		{
+			ans += (*lowB)*(*lowB - i + 1);
+		}
+		i = (*lowB);
+	}
+	cout << ans << endl;
+	return 0;
+}
