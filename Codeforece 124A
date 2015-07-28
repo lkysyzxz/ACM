@@ -11,7 +11,7 @@
   1.notSure>b 那么此时的notSure 变为b
   2.notSure<b 那么notSure 不变
   最终答案就是notSure+1(0的情况)
-  所以答案就是min(n*/
+  所以答案就是min(n-a-1,b)+1*/
 
 #include<iostream>
 #include<string>
