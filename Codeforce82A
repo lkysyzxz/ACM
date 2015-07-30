@@ -1,0 +1,38 @@
+/*
+	数学模拟题
+		先计算大于n的队伍的总长度，然后计算出n位于的区间每个人占的位置长度
+		再计算区间左端的值，最后模拟一下就可以了
+		l+ca-1<n(第一个人占的位置的最右边比n小的时候，更新l= l+ca(第二个人的左边标号))*/
+
+#include<iostream>
+#include<cstring>
+#include<queue>
+#include<set>
+#include<cstdio>
+#include<string>
+#include<cmath>
+using namespace std;
+long long n;
+string name[5] = { "Sheldon", "Leonard", "Penny", "Rajesh", "Howard" };
+int main()
+{
+	cin >> n;
+	long long T = 5;
+	int turn = 1;
+	long long total = 5;
+	while (n > total){
+		T*=2;//队伍长度
+		total += T;
+		turn++;
+	}
+	long long ca = pow(2, turn - 1);//占位
+	int ans = 1;
+	long long left = total - T+1;
+	while (left+ca-1<n)
+	{
+		left += ca;
+		ans++;
+	}
+	cout << name[ans - 1];
+	return 0;
+}
