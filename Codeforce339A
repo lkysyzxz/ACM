@@ -1,0 +1,29 @@
+//排序
+
+#include<cstring>
+#include<cstdio>
+#include<string>
+#include<queue>
+#include<iostream>
+#include<cctype>
+#include<algorithm>
+using namespace std;
+int num[111];
+int main()
+{
+	char input;
+	int p = 0;
+	while ((input = getchar()) && input != '\n')
+	{
+		if (isdigit(input))
+			num[p++] = input - '0';
+	}
+	sort(num, num + p);
+	for (int i = 0; i < p; i++)
+	{
+		cout << num[i];
+		if (i != p - 1)
+			cout << "+";
+	}
+	return 0;
+}
