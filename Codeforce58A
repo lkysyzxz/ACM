@@ -1,0 +1,83 @@
+http://codeforces.com/problemset/problem/119/A
+
+/*这是一道挺水的题，然而需要一点技巧
+	 给一个字符串，从中寻找 连续分布的 hello 字串
+	 方法：考虑到 hello 中有两个 l,这样，就需要把所有 l 的位置记下，并且从小到大排序
+	 考察相邻的l的左边和右边有没有符合条件的字符，暴力查找，也可以做点优化
+	 每次寻找删除最左边的l的位置，直到集合为空
+	 */
+
+#include<string>
+#include<algorithm>
+#include<cstdio>
+#include<iostream>
+#include<cstring>
+#include<set>
+using namespace std;
+#define out(x) cout<<x<<endl
+struct pos{
+	int x;
+	bool operator<(const pos &t)const
+	{
+		return x < t.x;
+	}
+};
+
+set<pos> lPosition;
+int main()
+{
+	string input;
+	cin >> input;
+	for (int i = 0; i < input.size(); i++)
+	{
+		if (input[i] == 'l')
+			lPosition.insert(pos{ i });
+	}
+	bool yes = false;
+	while (!lPosition.empty())
+	{
+		set<pos>::iterator pl = lPosition.begin();
+		pos lpos = *pl;
+		lPosition.erase(pl);
+		if (lPosition.empty())
+			break;
+		set<pos>::iterator pr = lPosition.begin();
+		pos rpos = *pr;
+		bool left = false;
+		bool Right=false;
+
+		char target = 'e';
+		for (int i = lpos.x; i >= 0; i--)
+		{
+			if (input[i] == target)
+			{
+				if (target == 'e')
+					target = 'h';
+				else
+					left = true;
+			}
+			if (left)
+				break;
+		}
+			  target = 'o';
+		 for (int r = rpos.x; r < input.size(); r++)
+		 {
+			 if (input[r] == target)
+			 {
+				 Right = true;
+				 break;
+			 }
+		 }
+		 if (left&&Right)
+		 {
+			 yes = true;
+			 break;
+		 }
+	}
+
+	if (yes)
+		out("YES");
+	else
+		out("NO");
+	return 0;
+}
