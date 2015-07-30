@@ -1,0 +1,56 @@
+/*足球队的站位，用字符串表示，要求这个站位是否安全
+	实则是求 一个字符串中有没有七个以上连续相同的字符*/
+
+#include<iostream>
+#include<string>
+#include<cstring>
+#include<cstdio>
+using namespace std;
+int visit[111];
+bool Yes;
+int dfs(int pos, string &input,char tar)
+{
+	int cnt = 1;
+	int i;
+	for (i = pos + 1; pos < input.size(); i++)
+	{
+		if (input[i] == tar)
+			cnt++;
+		else
+			break;
+		if (cnt >= 7)
+			Yes = false;
+	}
+	return i;
+}
+int main()
+{
+	memset(visit, false, sizeof visit);
+	string input;
+	cin >> input;
+	Yes = true;
+	for (int i = 0; i < input.size(); i++)
+	{
+		if (input[i] == '1'){
+			visit[i] = true;
+			i = dfs(i, input,'1');
+		}
+		else
+			visit[i] = true;
+	}
+
+	for (int i = 0; i < input.size(); i++)
+	{
+		if (input[i] == '0'){
+			visit[i] = true;
+			i = dfs(i, input,'0');
+		}
+		else
+			visit[i] = true;
+	}
+	if (Yes)
+		cout << "NO" << endl;
+	else
+		cout << "YES" << endl;
+	return 0;
+}
