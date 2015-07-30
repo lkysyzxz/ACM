@@ -1,0 +1,25 @@
+/*CF 226A
+ 去除相邻的相同的字符串
+ 打印最后删除的字符数*/
+
+#include<string>
+#include<cstring>
+#include<cstdio>
+#include<queue>
+#include<set>
+#include<algorithm>
+#include<iostream>
+using namespace std;
+int n;
+string input;
+int main()
+{
+	cin >> n;
+	cin >> input;
+	int ans = 0;
+	for (int i = 1; i < input.size(); i++)
+		if (input[i] == input[i - 1])
+			ans++;
+	cout << ans << endl;
+	return 0;
+}
