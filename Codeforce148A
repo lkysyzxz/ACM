@@ -1,0 +1,18 @@
+	#include<iostream>
+	#include<string>
+	using namespace std;
+	#define mod(x,y) x%y==0
+	#define out(x) cout<<ans<<endl
+	int main()
+	{
+		int k, l, m, n, d;
+		int ans = 0;
+		cin >> k >> l >> m >> n >> d;
+		for (int i = 1; i <= d; i++)
+		{
+			if (mod(i, k) || mod(i, l) || mod(i, m) || mod(i, n))
+				ans++;
+		}
+		out(ans);
+		return 0;
+	}
