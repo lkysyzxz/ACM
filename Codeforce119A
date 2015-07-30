@@ -1,0 +1,43 @@
+/*有点小 trick
+	 是自己写搓了
+	 */
+
+#include<string>
+#include<algorithm>
+#include<cstdio>
+#include<iostream>
+#include<cstring>
+#include<set>
+using namespace std;
+#define out(x) cout<<x<<endl
+int gcd(int x, int y)
+{
+	if (y == 0)
+		return x;
+	return (x%y == 0) ? y : gcd(y, x%y);
+}
+int main()
+{
+	int a, b, n;
+	cin >> a >> b >> n;
+	int turn = a;
+	bool simon = true;
+	while (true)
+	{
+		int sub = gcd(turn, n);
+		if (n <sub)
+			break;
+		else
+			n -= sub;
+		if (turn == a)
+			turn = b;
+		else
+			turn = a;
+		simon = !simon;
+	}
+	if (simon)
+		out(1);
+	else
+		out(0);
+	return 0;
+}
