@@ -1,0 +1,23 @@
+/*字符串的比较*/
+
+
+#include<cstring>
+#include<cstdio>
+#include<string>
+#include<queue>
+#include<iostream>
+#include<cctype>
+using namespace std;
+int main()
+{
+	string input_1;
+	string input_2;
+	cin >> input_1 >> input_2;
+	for (int i = 0; i < input_1.size(); i++)
+	{
+		input_1[i] = tolower(input_1[i]);
+		input_2[i] = tolower(input_2[i]);
+	}
+	cout << strcmp(input_1.c_str(), input_2.c_str()) << endl;
+	return 0;
+}
