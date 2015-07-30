@@ -1,0 +1,27 @@
+//字符比对字符比dui
+
+#include<cstring>
+#include<cstdio>
+#include<string>
+#include<queue>
+#include<iostream>
+#include<cctype>
+using namespace std;
+int main()
+{
+	string input;
+	cin >> input;
+	bool yes = false;
+	for (int i = 0; i < input.size(); i++)
+	{
+		if (input[i] == 'H' || input[i] == 'Q' || input[i] == '9')
+			yes = true;
+		if (yes)
+			break;
+	}
+	if (yes)
+		cout << "YES" << endl;
+	else
+		cout << "NO" << endl;
+	return 0;
+}
