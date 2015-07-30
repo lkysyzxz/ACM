@@ -1,0 +1,24 @@
+/*模拟题 模拟地铁上下车人数，求这个过程中车上人最多的时为多少*/
+
+#include<iostream>
+#include<cstring>
+#include<algorithm>
+using namespace std;
+int n;
+int ans;
+int main()
+{
+	cin >> n;
+	ans = 0;
+	int exit = 0;
+	int enter = 0;
+	int inTram = 0;
+	for (int i = 1; i <= n; i++)
+	{
+		cin >> exit >> enter;
+		inTram = inTram - exit + enter;
+		ans = max(ans, inTram);
+	}
+	cout << ans << endl;
+	return 0;
+}
