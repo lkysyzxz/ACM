@@ -1,0 +1,32 @@
+//不同的字符的个数奇偶 
+
+#include<iostream>
+#include<string>
+#include<cctype>
+#include<algorithm>
+using namespace std;
+bool appear[26];
+int main()
+{
+	string input;
+	cin >> input;
+	int size = 0;
+	for (int i = 0; i < input.size(); i++)
+	{
+		if (!appear[input[i] - 'a'])
+		{
+			appear[input[i] - 'a'] = true;
+			size++;
+		}
+	}
+	bool chat = false;
+	if (size & 1)
+		chat = false;
+	else
+		chat = true;
+	if (chat)
+		cout << "CHAT WITH HER!" << endl;
+	else
+		cout << "IGNORE HIM!" << endl;
+	return 0;
+}
