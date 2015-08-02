@@ -1,0 +1,52 @@
+#include<iostream>
+#include<string>
+#include<cstring>
+#include<cstdio>
+#include<queue>
+#include<set>
+#include<algorithm>
+#include<cctype>
+using namespace std;
+string input;
+bool checkStr(string &str)
+{
+	for (int i= 0; i < str.size(); i++)
+	{
+		if (isspace(str[i]))
+			continue;
+		else if (str[i] == '#')
+			return true;
+		else
+			return false;
+	}
+	return false;
+}
+int main()
+{
+	bool newline = true;
+	
+	while (getline(cin, input))
+	{
+		if (checkStr(input))
+		{
+			if (!newline)
+			{
+				cout << endl;
+				newline = true;
+			}
+			cout << input << endl;
+		}
+		else
+		{
+			for (int i = 0; i < input.size(); i++)
+				if (isspace(input[i]))
+					continue;
+				else
+					cout << input[i];
+			newline = false;
+		}
+	}
+	if (!newline)
+	cout << endl;
+	return 0;
+}
