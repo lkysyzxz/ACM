@@ -1,0 +1,30 @@
+#include<iostream>
+#include<string>
+#include<algorithm>
+using namespace std;
+int main()
+{
+	int ini = 10;
+	int n;
+	cin >> n;
+	int ans;
+	int inhand = 10;
+	if (n <= ini)
+		ans = 0;
+	else
+	{
+		int require = n - inhand;
+		if (require > 11)
+			ans = 0;
+		else if (require == 11)
+			ans = 4;
+		else if (require == 10)
+			ans = 15;
+		else if (require > 0 && require < 10)
+			ans = 4;
+		else if (require == 0)
+			ans = 0;
+	}
+	cout << ans << endl;
+	return 0;
+}
