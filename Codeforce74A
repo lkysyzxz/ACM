@@ -1,0 +1,32 @@
+#include<string>
+#include<cstdio>
+#include<set>
+#include<algorithm>
+#include<cstring>
+#include<iostream>
+using namespace std;
+struct Par
+{
+	string name;
+	int total;
+	bool operator<(const Par &t)const
+	{
+		return total > t.total;
+	}
+};
+set<Par> ans;
+int main()
+{
+	int n;
+	cin >> n;
+	int h, uh, a, b, c, d, e;
+	for (int i = 1; i <= n; i++)
+	{
+		Par p;
+		cin >> p.name >> h >> uh >> a >> b >> c >> d >> e;
+		p.total = h * 100 - uh * 50 + a + b + c + d + e;
+		ans.insert(p);
+	}
+	cout << ans.begin()->name << endl;
+	return 0;
+}
