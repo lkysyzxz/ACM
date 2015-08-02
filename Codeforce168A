@@ -1,0 +1,23 @@
+#include<string>
+#include<iostream>
+using namespace std;
+int main()
+{
+	double n, x, y;
+	cin >> n >> x >> y;
+	y /= 100;
+	double ans = 0;
+	if (x / n >= y)
+		cout << (int)ans << endl;
+	else
+	{
+		double tar = n*y-x;
+		long long temp = tar;
+		if (temp - tar == 0)
+			ans = temp;
+		else
+			ans = (int)(tar + 1);
+		cout << (int)ans << endl;
+	}
+	return 0;
+}
