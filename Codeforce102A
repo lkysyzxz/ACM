@@ -1,0 +1,66 @@
+#include<iostream>
+#include<string>
+#include<cstring>
+#include<cstdio>
+#include<queue>
+#include<set>
+#include<algorithm>
+using namespace std;
+int price[111];
+int n, m;
+vector<int> con[111];
+int ans;
+bool visit[111];
+void dfs(int start, int step,int now,int money)
+{
+	if (step!=2)
+		for (int i = 0; i < con[now].size(); i++)
+		{
+			if (!visit[con[now][i]])
+			{
+				visit[con[now][i]] = true;
+				dfs(start, step + 1, con[now][i], money + price[con[now][i]]);
+				visit[con[now][i]] = false;
+			}
+		}
+	else
+	{
+		for (int i = 0; i < con[now].size(); i++)
+		{
+			if (start == con[now][i])
+			{
+				if (ans > money)
+					ans = money;
+				return;
+			}
+		}
+	}
+}
+int main()
+{
+	cin >> n >> m;
+	for (int i = 1; i <= n; i++)
+	{
+		cin >> price[i];
+	}
+	int x, y;
+	for (int i = 1; i <= m; i++)
+	{
+		cin >> x >> y;
+		con[x].push_back(y);
+		con[y].push_back(x);
+	}
+	
+	ans = 0x3f3f3f3f;
+	for (int i = 1; i <= n; i++)
+	{
+		visit[i] = true;
+		dfs(i, 0,i,price[i]);
+		visit[i] = false;
+	}
+	if (ans != 0x3f3f3f3f)
+		cout << ans << endl;
+	else
+		cout << -1 << endl;
+	return 0;
+}
