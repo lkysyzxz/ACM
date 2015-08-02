@@ -1,0 +1,60 @@
+#include<iostream>
+#include<string>
+#include<cstring>
+#include<algorithm>
+#include<cstdlib>
+#include<cctype>
+using namespace std;
+string input_a;
+string input_b;
+void iToA(long long x, string &str)
+{
+	long long temp = x;
+	long long y = 0;
+	while (temp)
+	{
+		y = temp % 10;
+		temp /= 10;
+		str += '0' + y;
+	}
+	reverse(str.begin(), str.end());
+}
+void aToi(string &str, long long &x)
+{
+	long long temp = 0;
+	for (int i = 0; i < str.size(); i++)
+	{
+		temp = temp * 10 + str[i] - '0';
+	}
+	x = temp;
+}
+void RemoveZero(string &str,long long &x)
+{
+	long long temp = 0;
+	for (int i = 0; i < str.size(); i++)
+	{
+		if (str[i] != '0')
+			temp = temp * 10 + str[i] - '0';
+	}
+	x = temp;
+}
+int main()
+{
+	long long a;
+	long long b;
+	long long c;
+	string strC;
+	cin >> input_a >>input_b;
+	aToi(input_a, a);
+	aToi(input_b, b);
+	c = a + b;
+	iToA(c, strC);
+	RemoveZero(input_a,a);
+	RemoveZero(input_b,b);
+	RemoveZero(strC,c);
+	if (a + b == c)
+		cout << "YES" << endl;
+	else
+		cout << "NO" << endl;
+	return 0;
+}
