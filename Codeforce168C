@@ -1,0 +1,72 @@
+/*
+	数学模拟题
+	有n辆列车准备出站，开往同一个目的地，如果列车相互追上的话，不会超过去
+	
+	思路：计算每一次列车到站的时间，如果比前一辆车的小或相等，那么它肯定能追上前一辆车，于是与前一辆车到达的时间是一样的
+							   如果比前一辆车的大，那么肯定追不上，以自己到站的时间为准
+							   
+		 那么我们只需要计算时间即可
+		 对于时间的计算采取什么公式好呢？
+		 分两种情况，第一，列车能一直加速到达终点
+				   第二，列车先加速后匀速行驶
+				   
+		 算出行走时间，加上出站时间，与前一辆车使用时间进行比较，确定最终到达时间
+		 
+	但是要注意的是，选取合适的计算公式，公式写好了，不要蛮干，因为不一样的写法可能会爆double
+	用cin输入会超时 10^5*/
+
+#include<iostream>
+#include<string>
+#include<cstdio>
+#include<queue>
+#include<set>
+#include<algorithm>
+#include<cstring>
+#include<vector>
+#include<cmath>
+using namespace std;
+vector<double> arrTime;
+int n;
+double a;
+double d;
+double tv[111111][2];
+double doubX(int x)
+{
+	return x*x;
+}
+int main()
+{
+	scanf("%d%lf%lf", &n, &a, &d);
+	for (int i = 1; i <= n; i++)
+		scanf("%lf%lf", &tv[i][0], &tv[i][1]);
+	long double preTime = 0.0;
+	for (int i = 1; i <= n; i++)
+	{
+		double t = 0.0;
+		if (tv[i][1]/2/a*tv[i][1]>=d)
+		{
+			t = sqrt(2 * d / a);
+		}
+		else
+		{
+			double t1 = tv[i][1] / a;
+			double s1 = tv[i][1]/2/a*tv[i][1];
+			double t2 = (d - s1) / tv[i][1];
+			t = t1 + t2;
+		}
+
+		if (t + tv[i][0] >=preTime)
+		{
+			arrTime.push_back(t + tv[i][0]);
+			preTime = t + tv[i][0];
+		}
+		else
+		{
+			arrTime.push_back(preTime);
+		}
+	}
+
+	for (int i = 0; i < arrTime.size(); i++)
+		printf("%.10f\n", arrTime[i]);
+	return 0;
+}
