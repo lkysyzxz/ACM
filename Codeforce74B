@@ -1,0 +1,100 @@
+//链接：http://codeforces.com/contest/74/problem/B
+
+
+/*题目背景：
+		  有一个人没买票上了车与检票员周旋的故事
+		  检票员在车上移动，从头到尾，又从尾到头
+		  偷渡者的决策比较多，他可以停在原地，可以往相邻的车厢走，偷渡者必须根据列车运行的状态来进行
+		  
+题型：贪心，DP
+		  对于每一个状态，偷渡者根据检票员的位置和方向做出决策，且每种状态都存在最优决策
+		  第一  当检票员朝自己移动时，选择远离检票员的方向移动为最优，这样不会和检票员相遇且有更多的时间等待列车停下，这是最优的
+		  第二  当检票员背离自己的时候，还是选择远离检票员的方向，可见这也是最优的，毕竟，靠近他很危险
+		  第三  车停下的时候（遇到了1）偷渡者有一次任意选择车厢的机会，选择哪一节车厢最优，只取决于检票员的反向
+				我们不会选择跑到他前面等他来抓，所以，选择他的反方向，然而离他越远越安全，则 选取最远的车厢，通常不是头就是尾*/
+
+
+#include<string>
+#include<cstring>
+#include<iostream>
+#include<algorithm>
+#include<cstdio>
+#include<queue>
+#include<set>
+#include<vector>
+using namespace std;
+int n, m, k;
+int num[55];
+int dirValue;
+const string ToHead = "to head";
+const string ToTail = "to tail";
+string direction;
+string wagons;
+int main()
+{
+	cin >> n >> m >> k;
+	cin.get();
+	getline(cin, direction);
+	cin >> wagons;
+	if (direction == ToHead)
+		dirValue = -1;
+	else
+		dirValue = 1;
+	
+	int ctrlorPos = k;
+	int stowawPos = m;
+	bool stowWin = true;
+	int minute = 0;
+	for (int i = 0; i < wagons.size()&&stowWin; i++,minute++)
+	{
+		if (ctrlorPos == stowawPos)
+		{
+			stowWin = false;
+			break;
+		}
+
+		//ctrlor决策
+		ctrlorPos += dirValue;
+		//判断方向改变
+		
+		if (wagons[i] == '0')
+		{//火车移动 偷渡者的决策
+			//检票员向自己的方向移动
+			if (stowawPos >= ctrlorPos&&dirValue == 1 && stowawPos + 1 <= n)
+			{
+				stowawPos++;
+			}
+			else if (stowawPos <= ctrlorPos&&dirValue == -1 && stowawPos - 1 >= 1)
+			{
+				stowawPos--;
+			}
+			else if (stowawPos > ctrlorPos&&dirValue == -1 && stowawPos + 1 <= n)
+			{
+				stowawPos++;
+			}
+			else if (stowawPos < ctrlorPos&&dirValue == 1 && stowawPos - 1 >= 1)
+			{
+				stowawPos--;
+			}
+			//检票员背离自己
+		}
+		else
+		{//火车空虚 偷渡者的决策
+			if (dirValue == -1)
+				stowawPos = n;
+			else
+				stowawPos = 1;
+		}
+
+		if (dirValue == -1 && ctrlorPos == 1)
+			dirValue = 1;
+		else if (dirValue == 1 && ctrlorPos == n)
+			dirValue = -1;
+	}
+
+	if (stowWin)
+		cout << "Stowaway" << endl;
+	else
+		cout << "Controller" << " " << minute << endl;
+		return 0;
+}
