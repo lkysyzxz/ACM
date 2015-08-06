@@ -1,0 +1,85 @@
+/*CF208A
+	字符串模拟题，把其中WUB的子串中的字符按出现的顺序打印出来
+	先预处理字符串，再扫描处理出来的数组
+	不过效率还是太低了*/
+
+#include<iostream>
+#include<string>
+#include<cstring>
+#include<cstdio>
+#include<set>
+#include<vector>
+using namespace std;
+string input;
+int Next[222];//第i个WUB出现的位置
+int p;
+void preProgress(string &input)
+{
+	p = 1;
+	int j = 2;
+	while (j < input.size())
+	{
+		if (input[j - 2] == 'W'&&input[j - 1] == 'U'&&input[j] == 'B')
+		{
+			Next[p++] = j - 2;
+			j+=3;
+		}
+		else
+		{
+			j++;
+		}
+	}
+}
+
+vector<string> ans;
+int main()
+{
+	cin >> input;
+	preProgress(input);
+	if (p == 1)//wa在了这里
+	{
+		cout << input << endl;
+		return 0;
+	}
+
+
+	if (Next[1] != 0)
+	{
+		string temp;
+		for (int i = 0; i < Next[1];i++)
+		{
+			temp += input[i];
+		}
+		ans.push_back(temp);
+	}
+	for (int i = 2; i < p; i++)
+	{
+		if (Next[i] - Next[i - 1] != 3)
+		{
+			string temp;
+			for (int j = Next[i - 1] + 3; j < Next[i]; j++)
+			{
+				temp += input[j];
+			}
+			ans.push_back(temp);
+		}
+	}
+	if (Next[p - 1] != input.size() - 3)
+	{
+		string temp;
+		for (int i = Next[p - 1] + 3; i < input.size(); i++)
+			temp += input[i];
+		ans.push_back(temp);
+	}
+	vector<string>::iterator p = ans.begin();
+	while (p != ans.end())
+	{
+		cout << *p;
+		p++;
+		if (p != ans.end())
+			cout << " ";
+		else
+			cout << endl;
+	}
+	return 0;
+}
