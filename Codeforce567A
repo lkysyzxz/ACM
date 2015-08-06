@@ -1,0 +1,31 @@
+#include<iostream>
+#include<string>
+#include<algorithm>
+using namespace std;
+int n;
+int pos[111111];
+int ans[111111][2];
+int main()
+{
+    cin >> n;
+    for (int i = 1; i <= n; i++)
+    {
+        cin >> pos[i];
+    }
+    ans[1][0] = pos[2] - pos[1];
+    ans[1][1] = pos[n] - pos[1];
+    
+    ans[n][0] = pos[n] - pos[n - 1];
+    ans[n][1] = pos[n] - pos[1];
+    for (int i = 2; i < n; i++)
+    {
+        ans[i][0] = min(pos[i] - pos[i - 1], pos[i + 1] - pos[i]);
+        ans[i][1] = max(pos[i] - pos[1], pos[n] - pos[i]);
+    }
+
+    for (int i = 1; i <= n; i++)
+    {
+        cout << ans[i][0] << " " << ans[i][1] << endl;
+    }
+    return 0;
+}
