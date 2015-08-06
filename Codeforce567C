@@ -1,0 +1,29 @@
+/*Codeforce567C
+	一道DP题，从一个数列中找三个数组成的子数列，构成等比数列*/
+
+#include<iostream>
+#include<map>
+#include<algorithm>
+using namespace std;
+map<long long, long long> A, B;
+int n;
+int k;
+int x;
+int main()
+{
+	cin >> n>>k;
+	long long ans = 0;
+	for (int i = 1; i <= n; i++)
+	{
+		cin >> x;
+		if (x % (k*k) == 0)ans += B[x / k];
+		if (x%k == 0)B[x] += A[x / k];
+		A[x]++;
+		//B[x] 到i为止  以x为后继的总数是多少
+		//A[x] 到i为止  x出现的次数
+
+		//ans的更新 以 x 为结尾 x/k 为中部的组合的总数
+	}
+	cout << ans << endl;
+	return 0;
+}
