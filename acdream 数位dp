@@ -1,0 +1,71 @@
+//acdream 数位dp
+/*
+	青君的讨厌数字为 4 37，数字中包含这些字眼的都讨厌，找一个区间内所有他喜欢的数字
+
+	dp[i][j] 数组表示 以j开头的i位数 它喜欢的数字的个数
+	j!=4  j,k不同时为3 7, 
+	dp[i][j]+=dp[i-1][k]
+*/
+
+#include<iostream>
+#include<cctype>
+#include<cstdio>
+#include<cstring>
+#include<string>
+#include<sstream>
+#include<cmath>
+#include<algorithm>
+#include<map>
+#include<set>
+#include<stack>
+#include<queue>
+#include<bitset>
+using namespace std;
+long long dp[20][20];
+void init()
+{
+	dp[0][0] = 1;
+	for (int i = 1; i <= 10; i++)
+		for (int j = 0; j < 10; j++)
+			for (int k = 0; k < 10; k++)
+			{
+				if (j != 4 && !(j == 3 && k == 7))//计算出以j开头的i位数有多少喜欢的数字
+					dp[i][j] += dp[i - 1][k];//在满足条件的前提下与之前的数字组合，得到新的一批数字
+			}
+}
+
+long long solve(int n)
+{
+	int len = 1;
+	int digits[20];
+	while (n){
+		digits[len++] = n % 10;
+		n /= 10;
+	}
+	long long ans = 0;
+	digits[len] = 0;
+	for (int i = len-1; i >= 1; i--)
+	{
+		for (int j = 0; j < digits[i]; j++)//枚举比当前位小的所有数字，以j为开头的i位数所有可行解
+		{
+			if (j != 4 && !(j == 7 && digits[i + 1] == 3))
+				ans += dp[i][j];
+		}
+		if (digits[i] == 4 || digits[i] == 7 && digits[i + 1] == 3)
+			break;
+		//当前位为4 或当前位与前一位构成 3 7 没必要再往后枚举
+		//因为按位枚举，枚举比当前位数字小的所有数字，叠加出ans 然后保留当前位，枚举更小的数字
+		//如果当前位为非法的，再往后都是非法的，没必要往后了
+	}
+	return ans;
+}
+int main()
+{
+	int l, r;
+	while (cin >> l >> r&&(l||r))
+	{
+		init();
+		cout << solve(r + 1) - solve(l) << '\n';
+	}
+	return 0;
+}
