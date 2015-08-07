@@ -1,0 +1,63 @@
+#include<iostream>
+#include<cctype>
+#include<cstdio>
+#include<cstring>
+#include<string>
+#include<sstream>
+#include<cmath>
+#include<algorithm>
+#include<map>
+#include<set>
+#include<stack>
+#include<queue>
+#include<bitset>
+using namespace std;
+int n;
+int a[30];
+int b[30];
+int sa[30];
+int sb[30];
+int dp[30][30][30][30];
+int dfs(int x1, int y1, int x2, int y2)
+{
+	if (dp[x1][y1][x2][y2] >= 0)return dp[x1][y1][x2][y2];//当前状态已经访问过
+	int ret = 0;
+	int sum = 0;
+	if (x1 <= y1)sum += sa[y1] - sa[x1 - 1];
+	if (x2 <= y2)sum += sb[y2] - sb[x2 - 1];
+	if (x1 <= y1)
+		ret = max(ret, sum - min(dfs(x1 + 1, y1, x2, y2), dfs(x1, y1 - 1, x2, y2)));
+	//分解状态 当前状态左右各取一个，取出子状态的最小值，减去即得最大值
+	//两种子状态只能发生一种，不能同时发生，因此必须从两者中决策出一个最优状态 ：选出子状态中最小值，减去意味着将最小值留给对手
+	//状态的理解：在当前状态下，先手获得的最大值
+	//子状态与当前状态的关系，子状态有两个，表示当前状态下，先手，留给对手的状态
+	//从两个子状态中决策，取出最小值减去，即得自己获得的状态
+	if (x2 <= y2)
+		ret = max(ret, sum - min(dfs(x1, y1, x2 + 1, y2), dfs(x1, y1, x2, y2 - 1)));
+	return dp[x1][y1][x2][y2]=ret;
+}
+int main()
+{
+	while (cin >> n&&n)
+	{
+		memset(sa, 0, sizeof sa);
+		memset(sb, 0, sizeof sb);
+		memset(dp, -1, sizeof dp);
+		for (int i = 1; i <= n; i++)
+		{
+			cin >> a[i];
+			sa[i] =sa[i-1]+ a[i];
+		}
+
+		for (int i = 1; i <= n; i++)
+		{
+			cin >> b[i];
+			sb[i] = sb[i - 1] + b[i];
+		}
+
+		cout << dfs(1, n, 1, n)<<'\n';
+
+		
+	}
+	return 0;
+}
