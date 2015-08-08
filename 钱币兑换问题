@@ -1,0 +1,25 @@
+/*多重背包，状态转移方程
+	dp[j]=dp[j]+dp[j-i]*/
+
+#include<iostream>
+#include<string>
+#include<cstring>
+#include<cstdio>
+using namespace std;
+long long dp[44444];
+int n;
+int main()
+{
+	memset(dp, 0, sizeof dp);
+	dp[0] = 1;
+	for (int i = 1; i <= 3; i++){
+		for (int j = i; j <= 32768; j++)
+			dp[j] += dp[j - i]; 
+		//cout << dp[3] << endl;
+	}
+	while (cin >> n&&n)
+	{
+		cout << dp[n] << endl;
+	}
+	return 0;
+}
