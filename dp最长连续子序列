@@ -1,0 +1,53 @@
+#include<iostream>
+#include<string>
+#include<cstring>
+#include<algorithm>
+#include<queue>
+#include<set>
+#include<cstdio>
+using namespace std;
+int num[11111];
+int n;
+int sum;
+int begine;
+int ende;
+int ans;
+
+int inputEnd;
+int inputBegin;
+int main()
+{
+	while (scanf("%d", &n) != EOF&&n)
+	{
+		sum = 0;
+		ans = -0x3f3f3f;
+		int ansBegin = 0;
+		int ansEnd = 0;
+		for (int i = 1; i <= n; i++)
+		{
+			scanf("%d", &num[i]);
+			if (sum + num[i] >num[i])
+			{
+				sum += num[i];
+				inputEnd = i;
+			}
+			else
+			{
+				sum = num[i];
+				inputBegin = inputEnd = i;
+			}
+			if (sum > ans)
+			{
+				ans = sum;
+				ansBegin = inputBegin;
+				ansEnd	 = inputEnd;
+			}
+		}
+
+		if (ans >= 0)
+			printf("%d %d %d\n", ans, num[ansBegin], num[ansEnd]);
+		else
+			printf("0 %d %d\n", num[1], num[n]);
+	}
+	return 0;
+}
