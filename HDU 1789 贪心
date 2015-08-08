@@ -1,0 +1,55 @@
+#include<iostream>
+#include<string>
+#include<cstring>
+#include<cstdio>
+#include<algorithm>
+#define beginT int t; scanf("%d",&t);for(int T=1;T<=t;T++){
+#define endT }
+using namespace std;
+struct homeWork{
+	int deadLine;
+	int reduceScore;
+};
+bool cmp(const homeWork &a, const homeWork &b)
+{
+	if (a.reduceScore == b.reduceScore)
+		return a.deadLine < b.deadLine;
+	else
+		return a.reduceScore > b.reduceScore;
+}
+int used[1111];
+int n;
+homeWork input[1111];
+int main()
+{
+	beginT
+		while (scanf("%d", &n) != EOF&&n)
+		{
+			for (int i = 1; i <= n; i++)
+				scanf("%d", &input[i].deadLine);
+			for (int i = 1; i <= n; i++)
+				scanf("%d", &input[i].reduceScore);
+
+			sort(input + 1, input + 1 + n, cmp);
+
+			int ans=0;
+			memset(used, false, sizeof used);
+			for (int i = 1; i <= n; i++)
+			{
+				int j;
+				for (j = input[i].deadLine; j > 0; j--)
+				{
+					if (!used[j])
+					{
+						used[j] = true;
+						break;
+					}
+				}
+				if (j == 0)
+					ans += input[i].reduceScore;
+			}
+			cout << ans << endl;
+		}
+	endT
+	return 0;
+}
