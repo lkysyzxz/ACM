@@ -1,0 +1,48 @@
+HDU悼念512汶川大地震遇难同胞――珍惜现在，感恩生活
+
+#include<iostream>
+#include<string>
+#include<cstring>
+#include<cstdio>
+#include<queue>
+#include<algorithm>
+using namespace std;
+int dp[111][111];
+struct rice
+{
+	int p;
+	int h;
+	int c;
+};
+rice input[111]; 
+int n;
+int m;
+int main()
+{
+	memset(dp, 0, sizeof dp);
+	int c;
+	scanf("%d", &c);
+	for (int t = 1; t <= c; t++){
+		scanf("%d%d", &n, &m);
+		for (int i = 1; i <= m; i++)
+		{
+			scanf("%d%d%d", &input[i].p, &input[i].h, &input[i].c);
+		}
+
+		for (int i = 1; i <= m; i++)
+		{
+			for (int j = n; j >= 0; j--)
+			{
+				int __max = -1;
+				for (int k = 0; k <= input[i].c; k++)
+					if (k*input[i].p<=j)
+						__max = max(__max, dp[i - 1][j - k*input[i].p] + k*input[i].h);
+				dp[i][j] = __max;
+			}
+		}
+
+		int ans = dp[m][n];
+		cout << ans << endl;
+}
+	return 0;
+}
