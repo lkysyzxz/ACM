@@ -1,0 +1,49 @@
+卡输出- -first second third 然而 11 12 13 要特判
+
+#include<iostream>
+#include<string>
+#include<cstdio>
+#include<set>
+using namespace std;
+set<long long> humbleNumber;
+long long ans[11111];
+const char first[5] = "st";
+const char second[5] = "nd";
+const char third[5] = "rd";
+const char other[5] = "th";
+int main()
+{
+	humbleNumber.insert(1);
+	set<long long>::iterator it= humbleNumber.begin();
+	while (humbleNumber.size() < 30000)
+	{	
+		humbleNumber.insert(2 * (*it));
+		humbleNumber.insert(3 * (*it));
+		humbleNumber.insert(5 * (*it));
+		humbleNumber.insert(7 * (*it));
+		it++;
+	}
+	it = humbleNumber.begin();
+	for (int i = 1; i <= 6000; i++)
+	{
+		ans[i] = *it;
+		it++;
+	}
+	int n;
+	while (scanf("%d", &n) != EOF&&n)
+	{
+		const char *p;
+		int tenDigit = n % 10;
+		int hunDigit = n % 100;
+		if (tenDigit == 1&&hunDigit!=11)
+			p = first;
+		else if (tenDigit == 2&&hunDigit!=12)
+			p = second;
+		else if (tenDigit == 3&&hunDigit!=13)
+			p = third;
+		else
+			p = other;
+		printf("The %d%s humble number is %lld.\n", n, p, ans[n]);
+	}
+	return 0;
+}
