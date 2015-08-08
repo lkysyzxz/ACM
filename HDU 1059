@@ -1,0 +1,58 @@
+//多重背包
+
+#include<iostream>
+#include<string>
+#include<cstring>
+using namespace std;
+int dp[555555];
+int a[7];
+int n;
+int main()
+{
+	int cas = 0;
+	while (scanf("%d%d%d%d%d%d", &a[1], &a[2], &a[3], &a[4], &a[5], &a[6]))
+	{
+		memset(dp, 0, sizeof dp);
+		if (a[1] == 0 && a[2] == 0 && a[3] == 0 && a[4] == 0 && a[5] == 0 && a[6] == 0)
+			break;
+		printf("Collection #%d:\n", ++cas);
+		int sum = a[1]*1 + a[2]*2 + a[3]*3 + a[4]*4 + a[5]*5 + a[6]*6;
+		if (sum & 1 != 0)
+		{
+			printf("Can't be divided.\n\n");
+			continue;
+		}
+		else
+			sum /= 2;
+		dp[0] = true;
+		for (int i = 1; i <= 6; i++)
+		{
+			if (!a[i])
+				continue;
+			int cnt;
+			for (int j = 1; j <= a[i]; j*= 2)
+			{
+				cnt = j*i;
+				for (int k = sum; k >= cnt; k--)
+					if (dp[k - cnt])//能放入背包的条件
+						dp[k] = true;
+				a[i] -= j;
+			}
+			cnt = i*a[i];
+			if (cnt){
+				for (int j = sum; j >= cnt; j--)
+				{
+					if (dp[j - cnt])
+						dp[j] = true;
+				}
+			}
+		}
+
+		if (dp[sum])
+			printf("Can be divided.\n\n");
+		else
+			printf("Can't be divided.\n\n");
+
+	}
+	return 0;
+}
