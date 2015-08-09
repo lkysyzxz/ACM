@@ -1,0 +1,36 @@
+#include<iostream>
+#include<string>
+#include<cstring>
+#include<algorithm>
+using namespace std;
+struct card{
+	int bottom;
+	int top;
+};
+
+card Card[1111];
+int n;
+bool cmp(card &a, card &b)
+{
+	if (a.bottom == b.bottom)
+		return a.top > b.top;
+	else
+		return a.bottom > b.bottom;
+}
+int main()
+{
+	cin >> n;
+	for (int i = 1; i <= n; i++)
+		cin >> Card[i].top >> Card[i].bottom;
+	sort(Card + 1, Card + 1 + n, cmp);
+	int ans = 0;
+	int opp = 1;
+	for (int i = 1; i <= n&&opp; i++)
+	{
+		ans += Card[i].top;
+		opp--;
+		opp += Card[i].bottom;
+	}
+	cout << ans << endl;
+	return 0;
+}
