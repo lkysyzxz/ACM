@@ -1,0 +1,72 @@
+#include<iostream>
+#include<cmath>
+#include<algorithm>
+#include<cstring>
+using namespace std;
+const int Right = 2e6;
+int PI[Right + 2];
+int rub[Right + 2];
+long long p;
+long long q;
+bool isPrime(int x)
+{
+	for (int i = 2; i*i <= x; i++)
+		if (x%i == 0)
+			return false;
+	return true;
+}
+bool isHui(int x)
+{
+	int y = x;
+	int d = 0;
+	while (y)
+	{
+		d = d * 10 + y % 10;
+		y /= 10;
+	}
+	return x == d;
+}
+bool prime[Right + 2];
+
+int main()
+{
+	cin >> p >> q;
+	memset(prime, true, sizeof prime);
+	for (int i = 2; i <= 2e6; i++)
+	{
+		if (!prime[i])
+			continue;
+		if (isPrime(i))
+		{
+			prime[i] = true;
+			for (int k = 2; k*i <= 2e6; k++)
+				prime[k*i] = false;
+		}
+	}
+	PI[1] = 0;
+	for (int i = 2; i <= 2e6; i++)
+	{
+		if (prime[i])
+			PI[i] = PI[i - 1] + 1;
+		else
+			PI[i] = PI[i - 1];
+	}
+	rub[1] = 1;
+	for (int i = 2; i <= 2e6; i++)
+	{
+		rub[i] = rub[i - 1];
+		if (isHui(i))
+			rub[i]++;
+	}
+	long long ans = -1;
+	for (int i = 2e6; i >= 0; i--)
+	{
+		if (q*PI[i] <= p*rub[i])
+		{
+			ans = i;
+			break;
+		}
+	}
+	cout << ans << endl;
+	return 0;
+}
