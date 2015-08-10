@@ -1,0 +1,48 @@
+/*
+状态dp[i][j]有前j个数，组成i组的和的最大值。决策：
+第j个数，是在第包含在第i组里面，还是自己独立成组。
+方程 dp[i][j]=Max(dp[i][j-1]+a[j] , max( dp[i-1][k] ) + a[j] ) 0<k<j
+空间复杂度，m未知，n<=1000000，  继续滚动数组。
+时间复杂度 n^3. n<=1000000.  显然会超时，继续优化。
+max( dp[i-1][k] ) 就是上一组 0....j-1 的最大值。
+我们可以在每次计算dp[i][j]的时候记录下前j个的最大值
+用数组保存下来  下次计算的时候可以用，这样时间复杂度为 n^2.
+*/
+
+#include<iostream>
+#include<string>
+#include<cstring>
+#include<cstdio>
+#include<algorithm>
+#define Main int main(){
+#define MainEnd return 0;}
+#define HeadBegine(x,y) while(scanf("%d%d",&x,&y)!=EOF&&(x||y)){
+#define HeadEnd }
+#define LoopBegin(x,y,z) for(int x=z;x<=y;x++){
+#define LoopEnd }
+using namespace std;
+int a[1111111];
+int dp[1111111];
+int _max[111111];
+int n, m;
+int temp;
+Main
+	HeadBegine(m, n)
+	LoopBegin(i, n, 1)
+		scanf("%d", a + i);
+	LoopEnd;
+	memset(dp, 0, sizeof dp);
+	memset(_max, 0, sizeof _max);
+	dp[0] = 0;
+	_max[0] = 0;
+	LoopBegin(i, m,1)
+		temp = -0x3f3f3f3f;
+		LoopBegin(j, n, i)
+			dp[j] = max(dp[j - 1]+a[j], _max[j - 1] + a[j]);
+			_max[j - 1] = temp;	
+			temp = max(temp, dp[j]);
+		LoopEnd;
+	LoopEnd;
+		cout << temp << endl;
+	HeadEnd;
+MainEnd
