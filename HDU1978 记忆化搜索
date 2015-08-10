@@ -1,0 +1,44 @@
+#include<iostream>
+#include<cstdio>
+#include<cstring>
+using namespace std;
+#define CaseBegin int t;cin>>t;while(t--){
+#define CaseEnd   }
+int map[111][111];
+int dp[111][111];
+int n, m;
+
+int dfs(int x, int y)
+{
+	if (x == n&&y == m)
+		return 1;
+	if (dp[x][y] >= 0)
+		return dp[x][y];
+	int count = map[x][y];
+	int sum = 0;
+	for (int i = 0; i <= count; i++)
+		for (int j = 0; j <= count; j++)
+		{
+			if ((i + j) <= count && (x + i) <= n && (y + j) <= m&&(i+j)!=0){
+				sum += dfs(x + i, y + j);
+				sum %= 10000;
+			}
+		}
+	dp[x][y] = sum;
+	return sum;
+}
+int main()
+{
+	CaseBegin
+		cin >> n >> m;
+		memset(dp, -1, sizeof dp);
+		memset(map, 0, sizeof map);
+		for (int i = 1; i <= n; i++)
+			for (int j = 1; j <= m; j++)
+				cin >> map[i][j];
+
+		long long ans = dfs(1, 1);
+		cout << ans << endl;
+	CaseEnd
+	return 0;
+}
